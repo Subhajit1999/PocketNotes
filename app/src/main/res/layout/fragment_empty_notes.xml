@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".EmptyNotesFragment"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/iv_empty_notes"
+            android:src="@drawable/empty_notes"
+            android:layout_margin="20dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_empty_notes"
+            android:text="Looks like it's empty here."
+            android:textSize="18sp"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"
+            android:layout_alignBottom="@id/iv_empty_notes"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/add_button_layout"
+        android:visibility="gone"
+        android:gravity="center">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:id="@+id/add_note"
+            android:background="@drawable/button_click">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/iv_add_notes"
+                android:src="@drawable/ic_menu_add"
+                android:padding="1dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/tv_add_notes"
+                android:text="Add a note"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:padding="2dp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

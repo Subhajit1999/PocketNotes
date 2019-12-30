@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Pocket Notes</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="example_note_title">This is example note title</string>
+    <string name="example_note_body">This is note body where the note will be written This is note body where the note will be written This is note body where the note will be written</string>
+    <string name="example_note_time">Fri 27, 2019 | 11:57 AM</string>
+    <string name="hint_note_title">Note title</string>
+    <string name="hint_note_body">Type your note here</string>
+</resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".NoteEditorActivity"
+    android:layout_margin="5dp">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_note_title"
+        android:textSize="@dimen/noteTitleText"
+        android:padding="5dp"
+        android:hint="@string/hint_note_title"
+        app:fontFamily="serif"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:background="@android:color/transparent"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_note_content"
+        android:padding="5dp"
+        android:hint="@string/hint_note_body"
+        app:fontFamily="serif"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/darkestGray"
+        android:textSize="@dimen/noteBodyText"
+        android:background="@android:color/transparent"/>
+</LinearLayout>
