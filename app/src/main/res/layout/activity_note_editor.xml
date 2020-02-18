@@ -4,30 +4,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:id="@+id/note_editor_linear"
     android:layout_height="match_parent"
-    tools:context=".NoteEditorActivity"
+    tools:context=".activities.NoteEditorActivity"
     android:layout_margin="5dp">
 
-    <EditText
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/et_note_title"
-        android:textSize="@dimen/noteTitleText"
-        android:padding="5dp"
-        android:hint="@string/hint_note_title"
-        app:fontFamily="serif"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:background="@android:color/transparent"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/et_note_content"
-        android:padding="5dp"
-        android:hint="@string/hint_note_body"
-        app:fontFamily="serif"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/darkestGray"
-        android:textSize="@dimen/noteBodyText"
-        android:background="@android:color/transparent"/>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/et_note_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="@string/hint_note_title"
+                android:padding="5dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/noteTitleText"
+                android:textStyle="bold"
+                app:fontFamily="serif" />
+
+            <EditText
+                android:id="@+id/et_note_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/hint_note_body"
+                android:padding="5dp"
+                android:textColor="@color/darkestGray"
+                android:textSize="@dimen/noteBodyText"
+                app:fontFamily="serif" />
+
+        </LinearLayout>
+    </ScrollView>
+
 </LinearLayout>

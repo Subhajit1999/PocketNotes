@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".EmptyNotesFragment"
+    tools:context=".fragments.EmptyNotesFragment"
     android:background="@android:color/white">
 
     <RelativeLayout
@@ -16,12 +16,14 @@
             android:layout_height="wrap_content"
             android:id="@+id/iv_empty_notes"
             android:src="@drawable/empty_notes"
+            android:padding="20dp"
+
             android:layout_margin="20dp"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tv_empty_notes"
-            android:text="Looks like it's empty here."
+            android:text="@string/emptyscreen_message"
             android:textSize="18sp"
             android:textColor="@android:color/darker_gray"
             android:gravity="center"

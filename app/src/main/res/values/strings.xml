@@ -8,4 +8,7 @@
     <string name="example_note_time">Fri 27, 2019 | 11:57 AM</string>
     <string name="hint_note_title">Note title</string>
     <string name="hint_note_body">Type your note here</string>
+    <string name="string_bottomsheet_archive">Archive note</string>
+    <string name="string_bottomsheet_unarchive">Unarchive note</string>
+    <string name="emptyscreen_message">Oops! looks like it\'s empty here.\nTry to add a note first.</string>
 </resources>

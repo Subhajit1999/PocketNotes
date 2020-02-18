@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/root_listFragment"
     android:orientation="horizontal"
-    tools:context=".NotesListFragment"
+    tools:context=".fragments.NotesListFragment"
     android:background="@android:color/white">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -12,4 +13,6 @@
         android:layout_height="match_parent"
         android:id="@+id/notes_recycler"
         android:scrollbars="none"/>
+
+    <include layout="@layout/recycler_menu_bottomsheet" />
 </LinearLayout>

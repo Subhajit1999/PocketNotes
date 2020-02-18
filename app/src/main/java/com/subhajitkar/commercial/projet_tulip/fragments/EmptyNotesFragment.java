@@ -1,14 +1,12 @@
-package com.subhajitkar.commercial.projet_tulip;
+package com.subhajitkar.commercial.projet_tulip.fragments;
 
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,9 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.activities.NoteEditorActivity;
+import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
+
 public class EmptyNotesFragment extends Fragment {
     private static final String TAG = "EmptyNotesFragment";
-    private int Frag_identifier;
+    private String Frag_identifier;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,16 +37,16 @@ public class EmptyNotesFragment extends Fragment {
 
         //getting fragment argument
         if (getArguments()!=null){
-            Frag_identifier = getArguments().getInt("MainActivity");
+            Frag_identifier = getArguments().getString(StaticFields.KEY_INTENT_EMPTYNOTES);
         }
-        if (Frag_identifier==1 && StaticFields.getProfilesCount("notes")<=0) {  //if called in the mainActivity, means notes list empty
+        if (StaticFields.getProfilesCount(Frag_identifier)<=0 && !Frag_identifier.equals("archives")) {  //if called in the mainActivity, means notes list empty
             buttonLayout.setVisibility(View.VISIBLE);
             LinearLayout button = view.findViewById(R.id.add_note);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //button click event
-                    Intent i = new Intent(getContext(),NoteEditorActivity.class);
+                    Intent i = new Intent(getContext(), NoteEditorActivity.class);
                     i.putExtra(StaticFields.KEY_INTENT_EDITORACTIVITY,"new");
                     startActivity(i);
                 }

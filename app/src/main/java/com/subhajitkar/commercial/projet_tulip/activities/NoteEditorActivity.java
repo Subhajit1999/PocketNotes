@@ -1,23 +1,21 @@
-package com.subhajitkar.commercial.projet_tulip;
+package com.subhajitkar.commercial.projet_tulip.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NavUtils;
 
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
+
+import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -25,9 +23,10 @@ public class NoteEditorActivity extends AppCompatActivity {
     private static final String TAG = "NoteEditorActivity";
 
     private EditText noteTitle, noteContent;
+    private LinearLayout root;
     private Cursor c;
     private String intentFlag, UniqueId, createdDateAndTime;
-    private int position, idIndex, titleIndex, contentIndex,createdDateIndex;
+    private int position, idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +35,10 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         //customizing the actionbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("");
         //initializing views
         noteTitle = findViewById(R.id.et_note_title);
         noteContent = findViewById(R.id.et_note_content);
+        root = findViewById(R.id.note_editor_linear);
 
         try {
             //initializing database primitives
@@ -48,6 +47,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             titleIndex = c.getColumnIndex("title");
             contentIndex = c.getColumnIndex("content");
             createdDateIndex = c.getColumnIndex("dateCreated");
+            updatedDateIndex = c.getColumnIndex("dateUpdated");
         }catch(Exception e){
             Toast.makeText(getApplicationContext(),"Some error occurred. ("+e.getMessage()+")",Toast.LENGTH_SHORT).show();
         }
@@ -59,24 +59,25 @@ public class NoteEditorActivity extends AppCompatActivity {
         if (intentFlag.equals("existing")){
             position = getIntent().getIntExtra(StaticFields.KEY_INTENT_LISTPOSITION,0);
             Log.d(TAG, "onCreate: position: "+position);
+            getSupportActionBar().setTitle("Edit note");
             c.moveToPosition(position);
             UniqueId = c.getString(idIndex);
             noteTitle.setText(c.getString(titleIndex));
             noteContent.setText(c.getString(contentIndex));
             createdDateAndTime = c.getString(createdDateIndex);
+        }else{
+            getSupportActionBar().setTitle("Edit new note");
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Log.d(TAG, "onOptionsItemSelected: back button clicked");
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            Log.d(TAG, "onOptionsItemSelected: back button clicked");
+            onBackPressed();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -108,6 +109,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             if (intentFlag.equals("existing")) {  //note already exists
                 StaticFields.contentValues.put("id", UniqueId);
                 StaticFields.contentValues.put("dateCreated", createdDateAndTime);
+                StaticFields.contentValues.put("dateUpdated", currentDateAndTime);
                 StaticFields.database.update("notes", StaticFields.contentValues, "id = ?", new String[]{UniqueId});
 
             } else {          //indicates note doesn't exist or first element
@@ -118,9 +120,10 @@ public class NoteEditorActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                if (!AlreadyThere) {   //if new then insert
+                if (!AlreadyThere && !mTitle.isEmpty()) {   //if new then insert
                     StaticFields.contentValues.put("id", noteUniqueId);
                     StaticFields.contentValues.put("dateCreated", currentDateAndTime);
+                    StaticFields.contentValues.put("dateUpdated", currentDateAndTime);
                     StaticFields.database.insert("notes", null, StaticFields.contentValues);
                 }
             }

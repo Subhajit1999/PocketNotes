@@ -5,12 +5,13 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     app:cardCornerRadius="5dp"
-    app:cardElevation="8dp">
+    android:id="@+id/card_notes"
+    app:cardElevation="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
         android:orientation="vertical">
 
     <TextView
@@ -18,28 +19,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
+        android:layout_marginStart="5dp"
         android:maxLines="1"
         android:text="@string/example_note_title"
         android:textColor="@android:color/black"
         android:textSize="@dimen/noteTitleText"
         android:textStyle="bold"
-        app:fontFamily="serif" />
+        app:fontFamily="serif"
+        android:layout_marginLeft="5dp" />
 
     <TextView
         android:id="@+id/tv_note_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
         android:layout_marginBottom="3dp"
         android:maxLines="2"
+        android:textStyle="italic"
         android:textSize="@dimen/noteBodyText"
-        android:text="@string/example_note_body" />
+        android:text="@string/example_note_body"
+        android:layout_marginLeft="5dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_note_date"
+        android:layout_marginEnd="5dp"
         android:gravity="end"
         android:textSize="@dimen/noteCreatedDate"
         android:textColor="@color/colorAccent"
-        android:text="@string/example_note_time" />
+        android:text="@string/example_note_time"
+        android:layout_marginRight="5dp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
