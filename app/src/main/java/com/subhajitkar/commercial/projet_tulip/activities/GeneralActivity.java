@@ -1,6 +1,7 @@
 package com.subhajitkar.commercial.projet_tulip.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.MenuItem;
 
 import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.fragments.NotesListFragment;
+import com.subhajitkar.commercial.projet_tulip.fragments.SettingsFragment;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 public class GeneralActivity extends AppCompatActivity {
@@ -17,6 +19,13 @@ public class GeneralActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (StaticFields.darkThemeSet){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            setTheme(R.style.DarkTheme);
+        }else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            setTheme(R.style.AppTheme);
+        }
         setContentView(R.layout.activity_general);
 
         //getting arguments
@@ -34,6 +43,17 @@ public class GeneralActivity extends AppCompatActivity {
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment)
                     .commit();
+        }else if(identifier.equals("settings")){
+            getSupportActionBar().setTitle("Settings");
+
+            if (findViewById(R.id.fragment_container)!=null) {
+                //adding settings fragment
+                if (savedInstanceState!=null){
+                    return;
+                }
+                //getSupportFragmentManager() is not working here
+                getFragmentManager().beginTransaction().add(R.id.fragment_container, new SettingsFragment()).commit();
+            }
         }
     }
 

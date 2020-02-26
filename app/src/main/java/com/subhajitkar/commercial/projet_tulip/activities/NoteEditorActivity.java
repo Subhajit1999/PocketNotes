@@ -1,10 +1,12 @@
 package com.subhajitkar.commercial.projet_tulip.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
+import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
@@ -31,6 +34,13 @@ public class NoteEditorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (StaticFields.darkThemeSet){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            setTheme(R.style.DarkTheme);
+        }else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            setTheme(R.style.AppTheme);
+        }
         setContentView(R.layout.activity_note_editor);
 
         //customizing the actionbar
@@ -65,6 +75,8 @@ public class NoteEditorActivity extends AppCompatActivity {
             noteTitle.setText(c.getString(titleIndex));
             noteContent.setText(c.getString(contentIndex));
             createdDateAndTime = c.getString(createdDateIndex);
+
+            Snackbar.make(root, Html.fromHtml("<font color=\"#ffffff\">Note created at: "+createdDateAndTime+"</font>"),Snackbar.LENGTH_INDEFINITE).show();
         }else{
             getSupportActionBar().setTitle("Edit new note");
         }

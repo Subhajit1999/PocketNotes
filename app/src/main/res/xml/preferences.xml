@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Theme">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="key_change_theme"
+            android:title="Dark Theme"
+            android:background="?attr/cardBackColor"
+            android:summary="Enable dark mode to reduce glare"/>
+    </PreferenceCategory>
+<!--    <PreferenceCategory android:title="Backup and Sync">-->
+<!--        <SwitchPreference-->
+<!--            android:defaultValue="true"-->
+<!--            android:key="key_allow_backup"-->
+<!--            android:title="Allow Cloud backup"-->
+<!--            android:summary="Allow database backup over Google Drive"/>-->
+<!--        <Preference-->
+<!--            android:key="key_google_account"-->
+<!--            android:summary="Select google account to backup"-->
+<!--            android:title="Google account" />-->
+<!--    </PreferenceCategory>-->
+</PreferenceScreen>

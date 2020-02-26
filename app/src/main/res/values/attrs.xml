@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="da">
+        <attr name="backgroundColor" format="color" />
+        <attr name="cardBackColor" format="color" />
+        <attr name="titleColor" format="color" />
+        <attr name="contentColor" format="color" />
+    </declare-styleable>
+</resources>

@@ -6,12 +6,13 @@
     android:id="@+id/root_listFragment"
     android:orientation="horizontal"
     tools:context=".fragments.NotesListFragment"
-    android:background="@android:color/white">
+    android:background="?attr/backgroundColor">
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/notes_recycler"
+        android:background="@android:color/transparent"
         android:scrollbars="none"/>
 
     <include layout="@layout/recycler_menu_bottomsheet" />

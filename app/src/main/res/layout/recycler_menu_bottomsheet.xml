@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
     <LinearLayout
@@ -18,6 +19,7 @@
         android:id="@+id/tv_bottomsheet"
         android:text="Choose option:"
         android:textSize="16sp"
+        android:textColor="?attr/contentColor"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp" />
     </LinearLayout>
@@ -26,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:gravity="center_vertical"
-        android:background="@drawable/item_click_effect"
+        android:background="@android:color/transparent"
         android:id="@+id/bottomsheet_archive">
 
         <ImageView
@@ -41,7 +43,7 @@
             android:layout_margin="8dp"
             android:textSize="16sp"
             android:id="@+id/tv_bottomsheet_archive"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/titleColor"
             android:text="Archive"/>
     </LinearLayout>
     <LinearLayout
@@ -49,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:gravity="center_vertical"
-        android:background="@drawable/item_click_effect"
+        android:background="@android:color/transparent"
         android:id="@+id/bottomsheet_delete">
 
         <ImageView
@@ -72,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:gravity="center_vertical"
-        android:background="@drawable/item_click_effect"
+        android:background="@android:color/transparent"
         android:id="@+id/bottomsheet_share">
 
         <ImageView
@@ -87,7 +89,7 @@
             android:id="@+id/tv_bottomsheet_share"
             android:layout_margin="8dp"
             android:textSize="16sp"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/titleColor"
             android:text="Share a copy"/>
     </LinearLayout>
 <!--    <LinearLayout-->

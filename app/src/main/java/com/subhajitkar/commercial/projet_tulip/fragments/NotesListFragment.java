@@ -10,11 +10,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,19 +111,33 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         View dialogView = getLayoutInflater().inflate(R.layout.recycler_menu_bottomsheet, null);
         final BottomSheetDialog dialog = new BottomSheetDialog(getContext());
         //handle item click events
-        final ImageView archiveLogo;
+        final ImageView archiveLogo,shareLogo;
         final TextView archiveText;
         LinearLayout archive, delete, share;
         final int mPosition = position;
         archive = dialogView.findViewById(R.id.bottomsheet_archive);
         archiveLogo = dialogView.findViewById(R.id.iv_bottomsheet_archive);
         archiveText = dialogView.findViewById(R.id.tv_bottomsheet_archive);
+        shareLogo = dialogView.findViewById(R.id.iv_bottomsheet_share);
         if (table.equals("notes")){
-            archiveLogo.setImageResource(R.drawable.ic_archive);
+            if(StaticFields.darkThemeSet){
+                archiveLogo.setImageResource(R.drawable.ic_archive_dark);
+            }else {
+                archiveLogo.setImageResource(R.drawable.ic_archive);
+            }
             archiveText.setText(getResources().getString(R.string.string_bottomsheet_archive));
         }else{
-            archiveLogo.setImageResource(R.drawable.ic_unarchive);
+            if(StaticFields.darkThemeSet){
+                archiveLogo.setImageResource(R.drawable.ic_unarchive_dark);
+            }else {
+                archiveLogo.setImageResource(R.drawable.ic_unarchive);
+            }
             archiveText.setText(getResources().getString(R.string.string_bottomsheet_unarchive));
+        }
+        if(StaticFields.darkThemeSet){
+            shareLogo.setImageResource(R.drawable.ic_share_dark);
+        }else {
+            shareLogo.setImageResource(R.drawable.ic_share);
         }
         archive.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,7 +199,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             message = "Note unarchived.";
         }
         adapter.notifyDataSetChanged();
-        Snackbar.make(root,message,Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(root, Html.fromHtml("<font color=\"#ffffff\">"+message+"</font>"),Snackbar.LENGTH_SHORT).show();
 
         emptyNotesScreen();  //showing empty notes screen if list empty
     }
@@ -202,7 +218,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
                 StaticFields.database.delete(table,"id = ?", new String[]{c.getString(idIndex)});
                 dataList.remove(position);
                 adapter.notifyDataSetChanged();
-                Snackbar.make(root,"Note deleted successfully.",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(root,Html.fromHtml("<font color=\"#ffffff\">Note deleted successfully.</font>"),Snackbar.LENGTH_SHORT).show();
                 emptyNotesScreen();
             }
         });
