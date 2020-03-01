@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Theme">
+    <PreferenceCategory android:title="General settings">
         <SwitchPreference
             android:defaultValue="false"
             android:key="key_change_theme"
@@ -8,15 +8,46 @@
             android:background="?attr/cardBackColor"
             android:summary="Enable dark mode to reduce glare"/>
     </PreferenceCategory>
-<!--    <PreferenceCategory android:title="Backup and Sync">-->
-<!--        <SwitchPreference-->
-<!--            android:defaultValue="true"-->
-<!--            android:key="key_allow_backup"-->
-<!--            android:title="Allow Cloud backup"-->
-<!--            android:summary="Allow database backup over Google Drive"/>-->
-<!--        <Preference-->
-<!--            android:key="key_google_account"-->
-<!--            android:summary="Select google account to backup"-->
-<!--            android:title="Google account" />-->
-<!--    </PreferenceCategory>-->
+
+    <PreferenceCategory android:title="Contact information">
+        <Preference
+            android:key="key_contact_email"
+            android:background="?attr/cardBackColor"
+            android:title="Help and support" />
+        <Preference
+            android:key="key_rate_review"
+            android:background="?attr/cardBackColor"
+            android:title="Rate and review" />
+        <Preference
+            android:key="key_app_share"
+            android:title="Share"
+            android:background="?attr/cardBackColor" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Version and Legal info">
+        <Preference
+            android:key="key_app_about"
+            android:title="About app"
+            android:background="?attr/cardBackColor"
+            android:icon="@drawable/app_logo"
+            android:summary="Pocket notes is a minimal notepad app for android
+keeping simplicity in mind."/>
+        <Preference
+            android:key="key_terms_conditions"
+            android:background="?attr/cardBackColor"
+            android:title="Terms and conditions" />
+        <Preference
+            android:key="key_privacy_policy"
+            android:background="?attr/cardBackColor"
+            android:title="Privacy policy" />
+        <Preference
+            android:key="key_app_version"
+            android:title="App version"
+            android:background="?attr/cardBackColor"
+            android:summary="1.0.0"/>
+        <Preference
+            android:key="key_copyright"
+            android:title="Copyright @ 2020"
+            android:background="?attr/cardBackColor" />
+    </PreferenceCategory>
 </PreferenceScreen>

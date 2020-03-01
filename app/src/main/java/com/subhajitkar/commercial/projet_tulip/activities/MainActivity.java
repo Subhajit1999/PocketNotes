@@ -1,5 +1,6 @@
 package com.subhajitkar.commercial.projet_tulip.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -8,12 +9,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.SQLException;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.subhajitkar.commercial.projet_tulip.fragments.EmptyNotesFragment;
 import com.subhajitkar.commercial.projet_tulip.fragments.NotesListFragment;
 import com.subhajitkar.commercial.projet_tulip.R;
@@ -23,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private SharedPreferences themePreference;
+    private FloatingActionMenu fab_menu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             setTheme(R.style.AppTheme);
         }
         setContentView(R.layout.activity_main);
+        configureFAB();
     }
 
     @Override
@@ -61,11 +68,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d(TAG, "onOptionsItemSelected: menu items click action");
         switch(item.getItemId()){
-            case R.id.menu_add_note:
-                Intent i = new Intent(getApplicationContext(), NoteEditorActivity.class);
-                i.putExtra(StaticFields.KEY_INTENT_EDITORACTIVITY,"new");
-                startActivity(i);
-                break;
             case R.id.menu_archive:
                 //archive menu action
                 Intent intent = new Intent(this, GeneralActivity.class);
@@ -125,5 +127,26 @@ public class MainActivity extends AppCompatActivity {
         }catch(SQLException e){
             Log.d(TAG, "onResume: Exception: "+e.getMessage());
         }
+    }
+
+    public void configureFAB(){
+        Log.d(TAG, "configureFAB: creating fab button");
+        final FloatingActionButton fab_add_text = findViewById(R.id.fab_text_note);
+        fab_menu = findViewById(R.id.fab_menu);
+        fab_add_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), NoteEditorActivity.class);
+                i.putExtra(StaticFields.KEY_INTENT_EDITORACTIVITY,"new");
+                i.putExtra(StaticFields.KEY_INTENT_TABLEID,"notes");
+                startActivity(i);
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        fab_menu.close(true);
     }
 }

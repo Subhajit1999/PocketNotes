@@ -13,7 +13,9 @@
             android:launchMode="singleTask"/>
         <activity android:name=".activities.NoteEditorActivity" />
         <activity android:name=".activities.MainActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask" />
+        <activity android:name=".activities.SplashActivity"
+            android:theme="@style/AppTheme.noActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

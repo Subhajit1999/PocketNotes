@@ -1,13 +1,17 @@
 package com.subhajitkar.commercial.projet_tulip.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -16,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.fragments.NotesListFragment;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 import java.text.SimpleDateFormat;
@@ -28,7 +33,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     private EditText noteTitle, noteContent;
     private LinearLayout root;
     private Cursor c;
-    private String intentFlag, UniqueId, createdDateAndTime;
+    private String intentFlag, UniqueId, createdDateAndTime, table;
     private int position, idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex;
 
     @Override
@@ -50,9 +55,10 @@ public class NoteEditorActivity extends AppCompatActivity {
         noteContent = findViewById(R.id.et_note_content);
         root = findViewById(R.id.note_editor_linear);
 
+        table = getIntent().getStringExtra(StaticFields.KEY_INTENT_TABLEID);
         try {
             //initializing database primitives
-            c = StaticFields.database.rawQuery("SELECT * FROM notes", null);
+            c = StaticFields.database.rawQuery("SELECT * FROM "+table, null);
             idIndex = c.getColumnIndex("id");
             titleIndex = c.getColumnIndex("title");
             contentIndex = c.getColumnIndex("content");
@@ -76,20 +82,41 @@ public class NoteEditorActivity extends AppCompatActivity {
             noteContent.setText(c.getString(contentIndex));
             createdDateAndTime = c.getString(createdDateIndex);
 
-            Snackbar.make(root, Html.fromHtml("<font color=\"#ffffff\">Note created at: "+createdDateAndTime+"</font>"),Snackbar.LENGTH_INDEFINITE).show();
+            Snackbar.make(root, Html.fromHtml("<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Created at: "+createdDateAndTime+"</font>"),Snackbar.LENGTH_INDEFINITE).show();
         }else{
             getSupportActionBar().setTitle("Edit new note");
         }
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu: creating menu");
+        getMenuInflater().inflate(R.menu.menu_editor,menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
             Log.d(TAG, "onOptionsItemSelected: back button clicked");
             onBackPressed();
-            return true;
+                break;
+            case R.id.editor_share:
+                Log.d(TAG, "onOptionsItemSelected: editor share option");
+                String noteTitle = c.getString(titleIndex);
+                String noteContent = c.getString(contentIndex);
+
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, noteTitle+"\n\n"+
+                        noteContent+"\n\n================\nShared from Pocket Notes, a truly simple notepad app.\n\nDownload now:)\nhttp://play.google.com/store/apps/details?id="
+                        +getPackageName());
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, "Share note with..."));
+                break;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override

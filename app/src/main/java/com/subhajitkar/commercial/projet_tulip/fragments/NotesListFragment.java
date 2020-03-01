@@ -90,6 +90,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         Log.d(TAG, "onItemClick: recycler list item click action, position: "+position);
         Intent i = new Intent(getContext(), NoteEditorActivity.class);
         i.putExtra(StaticFields.KEY_INTENT_EDITORACTIVITY,"existing");
+        i.putExtra(StaticFields.KEY_INTENT_TABLEID,table);
         i.putExtra(StaticFields.KEY_INTENT_LISTPOSITION,position);
         startActivity(i);
     }
@@ -199,7 +200,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             message = "Note unarchived.";
         }
         adapter.notifyDataSetChanged();
-        Snackbar.make(root, Html.fromHtml("<font color=\"#ffffff\">"+message+"</font>"),Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(root, Html.fromHtml("<font color=\""+getResources().getColor(R.color.colorAccent)+"\">"+message+"</font>"),Snackbar.LENGTH_SHORT).show();
 
         emptyNotesScreen();  //showing empty notes screen if list empty
     }
@@ -207,9 +208,13 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
     private void manageDelete(final int position){
         Log.d(TAG, "manageDelete: deleting note");
         c.moveToPosition(position);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.AppDialogTheme);
         builder.setTitle("Warning:");
-        builder.setIcon(R.drawable.dialog_warning);
+        if (StaticFields.darkThemeSet) {
+            builder.setIcon(R.drawable.dialog_warning);
+        }else{
+            builder.setIcon(R.drawable.dialog_warning_dark);
+        }
         builder.setMessage("Are you sure you want to delete the note from the "+table+" list?");
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
@@ -218,7 +223,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
                 StaticFields.database.delete(table,"id = ?", new String[]{c.getString(idIndex)});
                 dataList.remove(position);
                 adapter.notifyDataSetChanged();
-                Snackbar.make(root,Html.fromHtml("<font color=\"#ffffff\">Note deleted successfully.</font>"),Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(root,Html.fromHtml("<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Note deleted successfully.</font>"),Snackbar.LENGTH_SHORT).show();
                 emptyNotesScreen();
             }
         });

@@ -3,19 +3,23 @@ package com.subhajitkar.commercial.projet_tulip.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.webkit.WebView;
+import android.webkit.WebViewFragment;
 
 import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.fragments.NotesListFragment;
 import com.subhajitkar.commercial.projet_tulip.fragments.SettingsFragment;
+import com.subhajitkar.commercial.projet_tulip.fragments.WebFragment;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 public class GeneralActivity extends AppCompatActivity {
     private static final String TAG = "GeneralActivity";
 
-    private String identifier;
+    private String identifier, webUrl, title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,8 +56,16 @@ public class GeneralActivity extends AppCompatActivity {
                     return;
                 }
                 //getSupportFragmentManager() is not working here
-                getFragmentManager().beginTransaction().add(R.id.fragment_container, new SettingsFragment()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
             }
+        }else if (identifier.equals("webView")){
+            Log.d(TAG, "onCreate: loading web fragment");
+            getSupportActionBar().setTitle(title);
+            WebFragment fragment = new WebFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(StaticFields.KEY_INTENT_WEBVIEW,webUrl);
+            fragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
         }
     }
 
@@ -61,6 +73,10 @@ public class GeneralActivity extends AppCompatActivity {
         Log.d(TAG, "getBundleData: getting bundle data");
         if (getIntent()!=null){
             identifier = getIntent().getStringExtra(StaticFields.KEY_BUNDLE_GENERAL);
+            if (identifier.equals("webView")){
+                webUrl = getIntent().getStringExtra(StaticFields.KEY_INTENT_WEBVIEW);
+                title = getIntent().getStringExtra(StaticFields.KEY_INTENT_WEBTITLE);
+            }
         }
     }
 
@@ -77,6 +93,13 @@ public class GeneralActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        supportFinishAfterTransition();
+        if (identifier.equals("webView")) {
+            finish();  // finishes General Activity instance
+            Intent settingIntent = new Intent(this, GeneralActivity.class);  //taking back to the GenaralActivity
+            settingIntent.putExtra(StaticFields.KEY_BUNDLE_GENERAL,"settings");  //with settings fragment
+            startActivity(settingIntent);
+        } else {
+            supportFinishAfterTransition();
+        }
     }
 }

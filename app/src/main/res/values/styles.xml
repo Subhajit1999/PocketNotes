@@ -17,6 +17,8 @@
         <item name="android:textColorSecondary">@color/darkestGray</item>
     </style>
 
+    <style name="AppTheme.noActionBar" parent="Theme.AppCompat.Light.NoActionBar" />
+
     <!-- dark theme. -->
     <style name="DarkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -42,5 +44,11 @@
     <style name="AppModalStyle"
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/background_bottomsheet_round_corner</item>
+    </style>
+
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">?attr/cardBackColor</item>
+        <item name="android:textColorPrimary">?attr/titleColor</item>
+        <item name="android:textColorSecondary">?attr/contentColor</item>
     </style>
 </resources>

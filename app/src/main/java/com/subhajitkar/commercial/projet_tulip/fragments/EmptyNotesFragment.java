@@ -33,24 +33,24 @@ public class EmptyNotesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated: fragment view created");
-        LinearLayout buttonLayout = view.findViewById(R.id.add_button_layout);
 
         //getting fragment argument
         if (getArguments()!=null){
             Frag_identifier = getArguments().getString(StaticFields.KEY_INTENT_EMPTYNOTES);
         }
-        if (StaticFields.getProfilesCount(Frag_identifier)<=0 && !Frag_identifier.equals("archives")) {  //if called in the mainActivity, means notes list empty
-            buttonLayout.setVisibility(View.VISIBLE);
-            LinearLayout button = view.findViewById(R.id.add_note);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //button click event
-                    Intent i = new Intent(getContext(), NoteEditorActivity.class);
-                    i.putExtra(StaticFields.KEY_INTENT_EDITORACTIVITY,"new");
-                    startActivity(i);
-                }
-            });
-        }
+//        add note button (deprecated temporarily)
+//        if (StaticFields.getProfilesCount(Frag_identifier)<=0 && !Frag_identifier.equals("archives")) {  //if called in the mainActivity, means notes list empty
+//            buttonLayout.setVisibility(View.VISIBLE);
+//            LinearLayout button = view.findViewById(R.id.add_note);
+//            button.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    //button click event
+//                    Intent i = new Intent(getContext(), NoteEditorActivity.class);
+//                    i.putExtra(StaticFields.KEY_INTENT_EDITORACTIVITY,"new");
+//                    startActivity(i);
+//                }
+//            });
+//        }
     }
 }
