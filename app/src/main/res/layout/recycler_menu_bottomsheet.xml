@@ -75,6 +75,29 @@
         android:layout_height="56dp"
         android:gravity="center_vertical"
         android:background="@android:color/transparent"
+        android:id="@+id/bottomsheet_save">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/iv_bottomsheet_save"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_file" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="16sp"
+            android:id="@+id/tv_bottomsheet_save"
+            android:textColor="?attr/titleColor"
+            android:text="Save as text file"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:background="@android:color/transparent"
         android:id="@+id/bottomsheet_share">
 
         <ImageView

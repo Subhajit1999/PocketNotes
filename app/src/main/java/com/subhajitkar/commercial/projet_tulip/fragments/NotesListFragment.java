@@ -1,16 +1,24 @@
 package com.subhajitkar.commercial.projet_tulip.fragments;
 
 
+import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ShareCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,6 +29,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,13 +38,19 @@ import android.widget.Toast;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.activities.MainActivity;
 import com.subhajitkar.commercial.projet_tulip.activities.NoteEditorActivity;
 import com.subhajitkar.commercial.projet_tulip.fragments.EmptyNotesFragment;
 import com.subhajitkar.commercial.projet_tulip.utils.ObjectNote;
+import com.subhajitkar.commercial.projet_tulip.utils.OnStorage;
 import com.subhajitkar.commercial.projet_tulip.utils.RecyclerAdapter;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
+import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class NotesListFragment extends Fragment implements RecyclerAdapter.OnItemClickListener, RecyclerAdapter.OnItemLongClickListener {
     private static final String TAG = "NotesListFragment";
@@ -46,6 +62,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
     private Cursor c;
     private ArrayList<ObjectNote> dataList;
     private int idIndex, titleIndex, contentIndex,createdDateIndex, updateDateIndex;
+    private static List<String> listPermissionsNeeded;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -112,14 +129,15 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         View dialogView = getLayoutInflater().inflate(R.layout.recycler_menu_bottomsheet, null);
         final BottomSheetDialog dialog = new BottomSheetDialog(getContext());
         //handle item click events
-        final ImageView archiveLogo,shareLogo;
+        final ImageView archiveLogo,shareLogo,saveLogo;
         final TextView archiveText;
-        LinearLayout archive, delete, share;
+        LinearLayout archive, delete, share, save;
         final int mPosition = position;
         archive = dialogView.findViewById(R.id.bottomsheet_archive);
         archiveLogo = dialogView.findViewById(R.id.iv_bottomsheet_archive);
         archiveText = dialogView.findViewById(R.id.tv_bottomsheet_archive);
         shareLogo = dialogView.findViewById(R.id.iv_bottomsheet_share);
+        saveLogo = dialogView.findViewById(R.id.iv_bottomsheet_save);
         if (table.equals("notes")){
             if(StaticFields.darkThemeSet){
                 archiveLogo.setImageResource(R.drawable.ic_archive_dark);
@@ -139,6 +157,11 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             shareLogo.setImageResource(R.drawable.ic_share_dark);
         }else {
             shareLogo.setImageResource(R.drawable.ic_share);
+        }
+        if(StaticFields.darkThemeSet){
+            saveLogo.setImageResource(R.drawable.ic_file_dark);
+        }else {
+            saveLogo.setImageResource(R.drawable.ic_file);
         }
         archive.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,12 +188,31 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             public void onClick(View v) {
                 //share click event
                 Log.d(TAG, "onClick: Share option clicked");
-                manageShare();
+                manageShare(mPosition);
+                dialog.dismiss();
+            }
+        });
+        save = dialogView.findViewById(R.id.bottomsheet_save);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: clicked save option.");
+                manageSave(mPosition);
                 dialog.dismiss();
             }
         });
         dialog.setContentView(dialogView);
         dialog.show();
+    }
+
+    private void manageSave(int position){
+        Log.d(TAG, "manageSave: saving to external storage");
+        if (!permissionsGranted(getContext())){ //if permission not granted
+            grantPermissionBottomSheet();
+        }else{
+            c.moveToPosition(position);
+            OnStorage.createFile(c.getString(titleIndex),c.getString(contentIndex),root,getContext());
+        }
     }
 
     private void manageArchive(int position){
@@ -211,9 +253,9 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.AppDialogTheme);
         builder.setTitle("Warning:");
         if (StaticFields.darkThemeSet) {
-            builder.setIcon(R.drawable.dialog_warning);
-        }else{
             builder.setIcon(R.drawable.dialog_warning_dark);
+        }else{
+            builder.setIcon(R.drawable.dialog_warning);
         }
         builder.setMessage("Are you sure you want to delete the note from the "+table+" list?");
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
@@ -231,18 +273,36 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         builder.show();
     }
 
-    private void manageShare(){
+    private void manageShare(int position){
         Log.d(TAG, "manageShare: handling share action");
+        c.moveToPosition(position);
         String noteTitle = c.getString(titleIndex);
         String noteContent = c.getString(contentIndex);
 
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, noteTitle+"\n\n"+
-                noteContent+"\n\n================\nShared from Pocket Notes, a truly simple notepad app.\n\nDownload now:)\nhttp://play.google.com/store/apps/details?id="
-                + getContext().getPackageName());
-        sendIntent.setType("text/plain");
-        startActivity(Intent.createChooser(sendIntent, "Share note with..."));
+        Intent sendIntent;
+        if (permissionsGranted(getContext())) {
+            File file = OnStorage.createFile(noteTitle, noteContent,root,getContext());  //getting created file
+            Uri fileUri = FileProvider.getUriForFile(getContext(), getActivity().getPackageName(),file);
+            sendIntent = ShareCompat.IntentBuilder.from(getActivity())
+                    .setType(getContext().getContentResolver().getType(fileUri))
+                    .setStream(fileUri)
+                    .getIntent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.setData(fileUri);
+            //setting proper mime type
+            MimeTypeMap map = MimeTypeMap.getSingleton();
+            String ext = MimeTypeMap.getFileExtensionFromUrl(file.getName());
+            String type = map.getMimeTypeFromExtension(ext);
+            if (type == null) {
+                type = "*/*";
+            }
+            sendIntent.setType(type);
+            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            startActivity(Intent.createChooser(sendIntent, "Share file with..."));
+        }else{
+            grantPermissionBottomSheet();
+        }
     }
 
     private void retrieveDB(){
@@ -286,5 +346,69 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, emptyNotesFragment)
                     .commit();
         }
+    }
+
+    public void grantPermissionBottomSheet(){
+        View dialogView = getLayoutInflater().inflate(R.layout.layout_permission_bottomsheet,null);
+        final BottomSheetDialog dialog = new BottomSheetDialog(getContext());
+        Button ok = dialogView.findViewById(R.id.bt_bottomsheet);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: bottomSheet button clicked.");
+                requestPermissions(getActivity());
+                dialog.dismiss();
+            }
+        });
+        dialog.setContentView(dialogView);
+        dialog.show();
+    }
+
+    public static boolean permissionsGranted(Context context) {
+        Log.d(TAG, "checkPermissions: checking if permissions granted.");
+        int result;
+        listPermissionsNeeded = new ArrayList<>();
+        for (String p:StaticFields.permissions) {
+            result = ContextCompat.checkSelfPermission(context,p);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p);
+            }
+        }
+        //if all/some permissions not granted
+        return listPermissionsNeeded.isEmpty();
+    }
+
+    private static void requestPermissions(Activity activity){
+        Log.d(TAG, "requestPermissions: requesting permissions.");
+        ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new
+                String[listPermissionsNeeded.size()]), StaticFields.PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult: action when permission granted or denied");
+        if (requestCode == StaticFields.PERMISSION_CODE) {
+            if (grantResults.length <= 0) {
+                // no permissions granted.
+                showPermissionDialog();
+            }
+        }
+    }
+
+    private void showPermissionDialog(){
+        Log.d(TAG, "showPermissionDialog: requesting permissions");
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+        builder.setTitle("Are you sure?");
+        builder.setMessage("You'll not be able to use this app properly without these permissions.");
+        builder.setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //re-requesting permissions
+                requestPermissions(getActivity());
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 }

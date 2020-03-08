@@ -13,10 +13,4 @@
         android:icon="@drawable/ic_menu_settings"
         android:orderInCategory="2"
         app:showAsAction="never"/>
-    <item
-        android:title="About"
-        android:id="@+id/menu_about"
-        android:icon="@drawable/ic_menu_add"
-        android:orderInCategory="3"
-        app:showAsAction="never"/>
 </menu>

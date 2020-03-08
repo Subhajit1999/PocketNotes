@@ -11,4 +11,7 @@
     <string name="string_bottomsheet_archive">Archive note</string>
     <string name="string_bottomsheet_unarchive">Unarchive note</string>
     <string name="emptyscreen_message">Oops!\nlooks like it\'s empty here.\nTry to add a note first.</string>
+    <string name="bottomSheet_button_go">Go</string>
+    <string name="permissions">Permissions:\n\n1. WRITE EXTERNAL STORAGE</string>
+    <string name="allow_permission_bottomsheet">To use all the features of this app such as saving your notes in the phone storage(.txt) you need to give the following permissions to the app.</string>
 </resources>

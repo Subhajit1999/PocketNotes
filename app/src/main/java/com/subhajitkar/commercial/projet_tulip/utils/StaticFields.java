@@ -1,5 +1,6 @@
 package com.subhajitkar.commercial.projet_tulip.utils;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,6 +25,10 @@ public class StaticFields {
     public static final String KEY_BUNDLE_GENERAL = "KEY_BUNDLE_GENERAL#978610";
     public static final String KEY_INTENT_WEBTITLE = "KEY_INTENT_WEBTITLE#379516";
     public static boolean darkThemeSet = false;
+    public static String[] permissions = new String[] {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    public static final int PERMISSION_CODE = 10;
 
 
     public static int getProfilesCount(String table) {

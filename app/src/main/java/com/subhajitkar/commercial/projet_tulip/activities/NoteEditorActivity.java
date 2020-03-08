@@ -104,16 +104,20 @@ public class NoteEditorActivity extends AppCompatActivity {
                 break;
             case R.id.editor_share:
                 Log.d(TAG, "onOptionsItemSelected: editor share option");
-                String noteTitle = c.getString(titleIndex);
-                String noteContent = c.getString(contentIndex);
+                if (!c.isClosed()) {
+                    String noteTitle = c.getString(titleIndex);
+                    String noteContent = c.getString(contentIndex);
 
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, noteTitle+"\n\n"+
-                        noteContent+"\n\n================\nShared from Pocket Notes, a truly simple notepad app.\n\nDownload now:)\nhttp://play.google.com/store/apps/details?id="
-                        +getPackageName());
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, "Share note with..."));
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, noteTitle + "\n\n" +
+                            noteContent + "\n\n================\nShared from Pocket Notes, a truly simple notepad app.\n\nDownload now:)\nhttp://play.google.com/store/apps/details?id="
+                            + getPackageName());
+                    sendIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(sendIntent, "Share note with..."));
+                }else{
+                    Toast.makeText(this,Html.fromHtml("<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Some error occurred.</font>"),Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
         return true;
