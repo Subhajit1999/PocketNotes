@@ -111,8 +111,8 @@ public class NoteEditorActivity extends AppCompatActivity {
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TEXT, noteTitle + "\n\n" +
-                            noteContent + "\n\n================\nShared from Pocket Notes, a truly simple notepad app.\n\nDownload now:)\nhttp://play.google.com/store/apps/details?id="
-                            + getPackageName());
+                            noteContent + "\n\n================\nShared from Pocket Notes, a truly simple notepad app.\n\nDownload now:)\n"
+                            + StaticFields.Store_URL);
                     sendIntent.setType("text/plain");
                     startActivity(Intent.createChooser(sendIntent, "Share note with..."));
                 }else{

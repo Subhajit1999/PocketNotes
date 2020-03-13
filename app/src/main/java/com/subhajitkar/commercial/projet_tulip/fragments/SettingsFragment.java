@@ -46,11 +46,9 @@ public class SettingsFragment extends PreferenceFragment {
                 if (newValue.toString().equals("true")){
                     StaticFields.darkThemeSet = true;
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//                    restartApp();
                 }else{
                     StaticFields.darkThemeSet = false;
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//                    restartApp();
                 }
                 return true;
             }

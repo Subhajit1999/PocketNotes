@@ -25,22 +25,28 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Html;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.activities.GeneralActivity;
 import com.subhajitkar.commercial.projet_tulip.activities.MainActivity;
 import com.subhajitkar.commercial.projet_tulip.activities.NoteEditorActivity;
 import com.subhajitkar.commercial.projet_tulip.fragments.EmptyNotesFragment;
+import com.subhajitkar.commercial.projet_tulip.utils.ListObject;
 import com.subhajitkar.commercial.projet_tulip.utils.ObjectNote;
 import com.subhajitkar.commercial.projet_tulip.utils.OnStorage;
 import com.subhajitkar.commercial.projet_tulip.utils.RecyclerAdapter;
@@ -188,7 +194,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             public void onClick(View v) {
                 //share click event
                 Log.d(TAG, "onClick: Share option clicked");
-                manageShare(mPosition);
+                manageShareChooser(mPosition);
                 dialog.dismiss();
             }
         });
@@ -273,35 +279,46 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         builder.show();
     }
 
-    private void manageShare(int position){
+    private void manageShare(int position, int shareType){
         Log.d(TAG, "manageShare: handling share action");
         c.moveToPosition(position);
         String noteTitle = c.getString(titleIndex);
         String noteContent = c.getString(contentIndex);
 
         Intent sendIntent;
-        if (permissionsGranted(getContext())) {
-            File file = OnStorage.createFile(noteTitle, noteContent,root,getContext());  //getting created file
-            Uri fileUri = FileProvider.getUriForFile(getContext(), getActivity().getPackageName(),file);
-            sendIntent = ShareCompat.IntentBuilder.from(getActivity())
-                    .setType(getContext().getContentResolver().getType(fileUri))
-                    .setStream(fileUri)
-                    .getIntent();
+        if (shareType==0){  //simple text format
+            sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.setData(fileUri);
-            //setting proper mime type
-            MimeTypeMap map = MimeTypeMap.getSingleton();
-            String ext = MimeTypeMap.getFileExtensionFromUrl(file.getName());
-            String type = map.getMimeTypeFromExtension(ext);
-            if (type == null) {
-                type = "*/*";
-            }
-            sendIntent.setType(type);
-            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, noteTitle + "\n\n" +
+                    noteContent + "\n\n================\nShared from Pocket Notes, a truly simple notepad app.\n\nDownload now:)\n"
+                    + StaticFields.Store_URL);
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Share note with..."));
 
-            startActivity(Intent.createChooser(sendIntent, "Share file with..."));
-        }else{
-            grantPermissionBottomSheet();
+        }else {  //text file format
+            if (permissionsGranted(getContext())) {
+                File file = OnStorage.createFile(noteTitle, noteContent, root, getContext());  //getting created file
+                Uri fileUri = FileProvider.getUriForFile(getContext(), getActivity().getPackageName(), file);
+                sendIntent = ShareCompat.IntentBuilder.from(getActivity())
+                        .setType(getContext().getContentResolver().getType(fileUri))
+                        .setStream(fileUri)
+                        .getIntent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.setData(fileUri);
+                //setting proper mime type
+                MimeTypeMap map = MimeTypeMap.getSingleton();
+                String ext = MimeTypeMap.getFileExtensionFromUrl(file.getName());
+                String type = map.getMimeTypeFromExtension(ext);
+                if (type == null) {
+                    type = "*/*";
+                }
+                sendIntent.setType(type);
+                sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                startActivity(Intent.createChooser(sendIntent, "Share file with..."));
+            } else {
+                grantPermissionBottomSheet();
+            }
         }
     }
 
@@ -409,6 +426,76 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             }
         });
         builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    private void manageShareChooser(final int itemPosition){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.AppDialogTheme);
+        if(StaticFields.darkThemeSet){
+            builder.setIcon(R.drawable.ic_share_dark);
+        }else {
+            builder.setIcon(R.drawable.ic_share);
+        }
+        builder.setTitle("Share as:");
+
+        final ArrayList<ListObject> list = new ArrayList<>();
+        list.add(new ListObject("Simple text",R.drawable.dialog_text,R.drawable.dialog_text_dark));
+        list.add(new ListObject("Text file format (.txt)",R.drawable.ic_file,R.drawable.dialog_text_dark));
+
+        class Adapter extends BaseAdapter {
+
+            private ArrayList<ListObject> list;
+            private Adapter(ArrayList<ListObject> list){
+                this.list = list;
+            }
+            @Override
+            public int getCount() {
+                return list.size();
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return list.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                ViewHolder viewHolder;
+                if (convertView==null) {
+                    viewHolder = new ViewHolder();
+                    LayoutInflater inflater = LayoutInflater.from(getContext());
+                    convertView = inflater.inflate(R.layout.layout_list_item,parent,false);
+                    //widgets initialization
+                    viewHolder.text = convertView.findViewById(R.id.tv_dialog);
+                    viewHolder.icon = convertView.findViewById(R.id.iv_dialog);
+
+                    convertView.setTag(viewHolder);
+                }else{
+                    viewHolder = (ViewHolder) convertView.getTag();
+                }
+                //adding data
+                viewHolder.text.setText(list.get(position).getText());
+                viewHolder.icon.setImageResource(list.get(position).getIcon());
+                viewHolder.icon.setTag(position);
+                return convertView;
+            }
+            class ViewHolder{
+                TextView text;
+                ImageView icon;
+            }
+        }
+        builder.setAdapter(new Adapter(list), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                manageShare(itemPosition,which);
+            }
+        });
         builder.show();
     }
 }
