@@ -5,11 +5,11 @@ public class ObjectNote {
     private String mNoteId, mNoteTitle, mNoteContent, mDateCreated, mdatedUpdated;
 
     public ObjectNote(String noteId, String noteTitle, String noteContent, String dateCreated, String dateUpdated){
-     mNoteId = noteId;
-     mNoteTitle = noteTitle;
-     mNoteContent = noteContent;
-     mDateCreated = dateCreated;
-     mdatedUpdated = dateUpdated;
+        mNoteId = noteId;
+        mNoteTitle = noteTitle;
+        mNoteContent = noteContent;
+        mDateCreated = dateCreated;
+        mdatedUpdated = dateUpdated;
     }
 
     public String getmNoteId() {

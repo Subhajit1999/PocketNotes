@@ -20,7 +20,6 @@ import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 public class EmptyNotesFragment extends Fragment {
     private static final String TAG = "EmptyNotesFragment";
-    private String Frag_identifier;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,10 +32,5 @@ public class EmptyNotesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated: fragment view created");
-
-        //getting fragment argument
-        if (getArguments()!=null){
-            Frag_identifier = getArguments().getString(StaticFields.KEY_INTENT_EMPTYNOTES);
-        }
     }
 }

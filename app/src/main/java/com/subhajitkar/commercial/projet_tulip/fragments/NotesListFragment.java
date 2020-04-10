@@ -60,7 +60,6 @@ import java.util.Objects;
 
 public class NotesListFragment extends Fragment implements RecyclerAdapter.OnItemClickListener, RecyclerAdapter.OnItemLongClickListener {
     private static final String TAG = "NotesListFragment";
-
     private RecyclerView notesRecycler;
     private String table;
     private RecyclerAdapter adapter;
@@ -226,24 +225,21 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
 
         //getting the data from the table and preparing in the contentValues
         c.moveToPosition(position);
-        StaticFields.contentValues = new ContentValues();
-        StaticFields.contentValues.put("id", c.getString(idIndex));
-        StaticFields.contentValues.put("title", c.getString(titleIndex));
-        StaticFields.contentValues.put("content", c.getString(contentIndex));
-        StaticFields.contentValues.put("dateCreated", c.getString(createdDateIndex));
-        StaticFields.contentValues.put("dateUpdated", c.getString(updateDateIndex));
+        ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(c.getString(idIndex),
+                c.getString(titleIndex), c.getString(contentIndex), c.getString(createdDateIndex),
+                c.getString(updateDateIndex));
 
         String message="";
-        if (table.equals("notes")){
+        if (table.equals(StaticFields.dbHelper.TABLE_NOTES)){
         //inserting data into archives table from notes table
-        StaticFields.database.insert("archives", null, StaticFields.contentValues);
-        StaticFields.database.delete("notes", "id = ?", new String[]{c.getString(idIndex)});
+        StaticFields.dbHelper.insertNote(StaticFields.dbHelper.TABLE_ARCHIVE,contentValues);
+        StaticFields.dbHelper.deleteNote(StaticFields.dbHelper.TABLE_NOTES, c.getString(idIndex));
         dataList.remove(position);
         message = "Note archived successfully.";
         }else{
             //inserting data into notes table from archives table
-            StaticFields.database.insert("notes", null, StaticFields.contentValues);
-            StaticFields.database.delete("archives", "id = ?", new String[]{c.getString(idIndex)});
+            StaticFields.dbHelper.insertNote(StaticFields.dbHelper.TABLE_NOTES,contentValues);
+            StaticFields.dbHelper.deleteNote(StaticFields.dbHelper.TABLE_ARCHIVE, c.getString(idIndex));
             dataList.remove(position);
             message = "Note unarchived.";
         }
@@ -268,7 +264,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //re-requesting permissions
-                StaticFields.database.delete(table,"id = ?", new String[]{c.getString(idIndex)});
+                StaticFields.dbHelper.deleteNote(table,c.getString(idIndex));
                 dataList.remove(position);
                 adapter.notifyDataSetChanged();
                 Snackbar.make(root,Html.fromHtml("<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Note deleted successfully.</font>"),Snackbar.LENGTH_SHORT).show();
@@ -329,12 +325,12 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         }
         try {
             //initializing database primitives
-            c = StaticFields.database.rawQuery("SELECT * FROM "+table, null);
-            idIndex = c.getColumnIndex("id");
-            titleIndex = c.getColumnIndex("title");
-            contentIndex = c.getColumnIndex("content");
-            createdDateIndex = c.getColumnIndex("dateCreated");
-            updateDateIndex = c.getColumnIndex("dateUpdated");
+            c = StaticFields.dbHelper.getData(table);
+            idIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_ID);
+            titleIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_TITLE);
+            contentIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_CONTENT);
+            createdDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_CREATED_DATE);
+            updateDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_UPDATED_DATE);
 
             do{
              c.moveToNext();
@@ -354,7 +350,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
     private void emptyNotesScreen(){
         Log.d(TAG, "emptyNotesScreen: for displaying empty notes fragment.");
 
-        if (StaticFields.database == null || StaticFields.getProfilesCount(table)<=0) {
+        if (StaticFields.dbHelper.numberOfRows(table)<=0) {
             //if table is empty or null
             EmptyNotesFragment emptyNotesFragment = new EmptyNotesFragment();
             Bundle bundle = new Bundle();
@@ -440,7 +436,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
 
         final ArrayList<ListObject> list = new ArrayList<>();
         list.add(new ListObject("Simple text",R.drawable.dialog_text,R.drawable.dialog_text_dark));
-        list.add(new ListObject("Text file format (.txt)",R.drawable.ic_file,R.drawable.dialog_text_dark));
+        list.add(new ListObject("File format",R.drawable.ic_file,R.drawable.ic_file_dark));
 
         class Adapter extends BaseAdapter {
 

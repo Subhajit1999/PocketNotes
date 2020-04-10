@@ -17,89 +17,89 @@ import com.subhajitkar.commercial.projet_tulip.fragments.WebFragment;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 public class GeneralActivity extends AppCompatActivity {
-    private static final String TAG = "GeneralActivity";
+  private static final String TAG = "GeneralActivity";
 
-    private String identifier, webUrl, title;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (StaticFields.darkThemeSet){
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            setTheme(R.style.DarkTheme);
-        }else{
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            setTheme(R.style.AppTheme);
-        }
-        setContentView(R.layout.activity_general);
-
-        //getting arguments
-        getIntentData();
-
-        //customizing the actionbar
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if (identifier.equals("archive")) {
-            getSupportActionBar().setTitle("Archives");
-
-            //adding fragment
-            NotesListFragment fragment = new NotesListFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(StaticFields.KEY_FRAGMENT_MAINACTIVITY,"archives");
-            fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment)
-                    .commit();
-        }else if(identifier.equals("settings")){
-            getSupportActionBar().setTitle("Settings");
-
-            if (findViewById(R.id.fragment_container)!=null) {
-                //adding settings fragment
-                if (savedInstanceState!=null){
-                    return;
-                }
-                //getSupportFragmentManager() is not working here
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
-            }
-        }else if (identifier.equals("webView")){
-            Log.d(TAG, "onCreate: loading web fragment");
-            getSupportActionBar().setTitle(title);
-            WebFragment fragment = new WebFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(StaticFields.KEY_INTENT_WEBVIEW,webUrl);
-            fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
-        }
+  private String identifier, webUrl, title;
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (StaticFields.darkThemeSet){
+      AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+      setTheme(R.style.DarkTheme);
+    }else{
+      AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+      setTheme(R.style.AppTheme);
     }
+    setContentView(R.layout.activity_general);
 
-    public void getIntentData(){
-        Log.d(TAG, "getBundleData: getting bundle data");
-        if (getIntent()!=null){
-            identifier = getIntent().getStringExtra(StaticFields.KEY_BUNDLE_GENERAL);
-            if (identifier.equals("webView")){
-                webUrl = getIntent().getStringExtra(StaticFields.KEY_INTENT_WEBVIEW);
-                title = getIntent().getStringExtra(StaticFields.KEY_INTENT_WEBTITLE);
-            }
-        }
-    }
+    //getting arguments
+    getIntentData();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            Log.d(TAG, "onOptionsItemSelected: back button clicked");
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    //customizing the actionbar
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    if (identifier.equals("archive")) {
+      getSupportActionBar().setTitle("Archives");
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        if (identifier.equals("webView")) {
-            finish();  // finishes General Activity instance
-            Intent settingIntent = new Intent(this, GeneralActivity.class);  //taking back to the GenaralActivity
-            settingIntent.putExtra(StaticFields.KEY_BUNDLE_GENERAL,"settings");  //with settings fragment
-            startActivity(settingIntent);
-        } else {
-            supportFinishAfterTransition();
+      //adding fragment
+      NotesListFragment fragment = new NotesListFragment();
+      Bundle bundle = new Bundle();
+      bundle.putString(StaticFields.KEY_FRAGMENT_MAINACTIVITY,"archives");
+      fragment.setArguments(bundle);
+      getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment)
+              .commit();
+    }else if(identifier.equals("settings")){
+      getSupportActionBar().setTitle("Settings");
+
+      if (findViewById(R.id.fragment_container)!=null) {
+        //adding settings fragment
+        if (savedInstanceState!=null){
+          return;
         }
+        //getSupportFragmentManager() is not working here
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
+      }
+    }else if (identifier.equals("webView")){
+      Log.d(TAG, "onCreate: loading web fragment");
+      getSupportActionBar().setTitle(title);
+      WebFragment fragment = new WebFragment();
+      Bundle bundle = new Bundle();
+      bundle.putString(StaticFields.KEY_INTENT_WEBVIEW,webUrl);
+      fragment.setArguments(bundle);
+      getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
     }
+  }
+
+  public void getIntentData(){
+    Log.d(TAG, "getBundleData: getting bundle data");
+    if (getIntent()!=null){
+      identifier = getIntent().getStringExtra(StaticFields.KEY_BUNDLE_GENERAL);
+      if (identifier.equals("webView")){
+        webUrl = getIntent().getStringExtra(StaticFields.KEY_INTENT_WEBVIEW);
+        title = getIntent().getStringExtra(StaticFields.KEY_INTENT_WEBTITLE);
+      }
+    }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      Log.d(TAG, "onOptionsItemSelected: back button clicked");
+      onBackPressed();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
+    if (identifier.equals("webView")) {
+      finish();  // finishes General Activity instance
+      Intent settingIntent = new Intent(this, GeneralActivity.class);  //taking back to the GenaralActivity
+      settingIntent.putExtra(StaticFields.KEY_BUNDLE_GENERAL,"settings");  //with settings fragment
+      startActivity(settingIntent);
+    } else {
+      supportFinishAfterTransition();
+    }
+  }
 }

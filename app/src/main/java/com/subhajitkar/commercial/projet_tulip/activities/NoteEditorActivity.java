@@ -9,7 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +22,6 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
-import com.subhajitkar.commercial.projet_tulip.fragments.NotesListFragment;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 import java.text.SimpleDateFormat;
@@ -33,7 +34,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     private EditText noteTitle, noteContent;
     private LinearLayout root;
     private Cursor c;
-    private String intentFlag, UniqueId, createdDateAndTime, table;
+    private String intentFlag, UniqueId, createdDateAndTime, table, extension;
     private int position, idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex;
 
     @Override
@@ -52,18 +53,19 @@ public class NoteEditorActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //initializing views
         noteTitle = findViewById(R.id.et_note_title);
+        noteTitle.setText("");
         noteContent = findViewById(R.id.et_note_content);
         root = findViewById(R.id.note_editor_linear);
 
         table = getIntent().getStringExtra(StaticFields.KEY_INTENT_TABLEID);
         try {
             //initializing database primitives
-            c = StaticFields.database.rawQuery("SELECT * FROM "+table, null);
-            idIndex = c.getColumnIndex("id");
-            titleIndex = c.getColumnIndex("title");
-            contentIndex = c.getColumnIndex("content");
-            createdDateIndex = c.getColumnIndex("dateCreated");
-            updatedDateIndex = c.getColumnIndex("dateUpdated");
+            c = StaticFields.dbHelper.getData(table);
+            idIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_ID);
+            titleIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_TITLE);
+            contentIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_CONTENT);
+            createdDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_CREATED_DATE);
+            updatedDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_UPDATED_DATE);
         }catch(Exception e){
             Toast.makeText(getApplicationContext(),"Some error occurred. ("+e.getMessage()+")",Toast.LENGTH_SHORT).show();
         }
@@ -142,21 +144,15 @@ public class NoteEditorActivity extends AppCompatActivity {
         String currentDateAndTime = getDateTime(StaticFields.visibleDateFormat);
         String noteUniqueId = getDateTime(StaticFields.UniqueIdDateFormat);
 
-        //preparing the data to be saved
-        StaticFields.contentValues = new ContentValues();
-        StaticFields.contentValues.put("title", mTitle);
-        StaticFields.contentValues.put("content", mContent);
-
         try {
             //checking if note already exists in the database or not
             if (intentFlag.equals("existing")) {  //note already exists
-                StaticFields.contentValues.put("id", UniqueId);
-                StaticFields.contentValues.put("dateCreated", createdDateAndTime);
-                StaticFields.contentValues.put("dateUpdated", currentDateAndTime);
-                StaticFields.database.update("notes", StaticFields.contentValues, "id = ?", new String[]{UniqueId});
+                ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(UniqueId,
+                        mTitle, mContent, createdDateAndTime, currentDateAndTime);
+                StaticFields.dbHelper.updateNote(StaticFields.dbHelper.TABLE_NOTES, UniqueId, contentValues);
 
             } else {          //indicates note doesn't exist or first element
-                for (int i = 0; i < StaticFields.getProfilesCount("notes"); i++) {
+                for (int i = 0; i < StaticFields.dbHelper.numberOfRows(StaticFields.dbHelper.TABLE_NOTES); i++) {
                     c.moveToPosition(i);
                     if (c.getString(titleIndex).equals(mTitle)) {  //if title matches to existing
                         AlreadyThere = true;
@@ -164,10 +160,9 @@ public class NoteEditorActivity extends AppCompatActivity {
                     }
                 }
                 if (!AlreadyThere && !mTitle.isEmpty()) {   //if new then insert
-                    StaticFields.contentValues.put("id", noteUniqueId);
-                    StaticFields.contentValues.put("dateCreated", currentDateAndTime);
-                    StaticFields.contentValues.put("dateUpdated", currentDateAndTime);
-                    StaticFields.database.insert("notes", null, StaticFields.contentValues);
+                    ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(noteUniqueId,
+                            mTitle, mContent, currentDateAndTime, currentDateAndTime);
+                    StaticFields.dbHelper.insertNote(StaticFields.dbHelper.TABLE_NOTES,contentValues);
                 }
             }
             c.close();

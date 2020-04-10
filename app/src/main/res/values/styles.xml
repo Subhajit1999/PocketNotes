@@ -1,54 +1,54 @@
 <resources>
 
-    <!-- Base application/light theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
-        <item name="backgroundColor">#FFFFFF</item>
-        <item name="cardBackColor">#ffffff</item>
-        <item name="titleColor">#000000</item>
-        <item name="contentColor">@color/darkestGray</item>
-        <item name="android:textColor">#000000</item>
-        <item name="android:itemBackground">#ffffff</item>
-        <item name="android:textColorPrimary">#000000</item>
-        <item name="android:textColorSecondary">@color/darkestGray</item>
-    </style>
+  <!-- Base application/light theme. -->
+  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+    <item name="backgroundColor">#FFFFFF</item>
+    <item name="cardBackColor">#ffffff</item>
+    <item name="titleColor">#000000</item>
+    <item name="contentColor">@color/darkestGray</item>
+    <item name="android:textColor">#000000</item>
+    <item name="android:itemBackground">#ffffff</item>
+    <item name="android:textColorPrimary">#000000</item>
+    <item name="android:textColorSecondary">@color/darkestGray</item>
+  </style>
 
-    <style name="AppTheme.noActionBar" parent="Theme.AppCompat.Light.NoActionBar" />
+  <style name="AppTheme.noActionBar" parent="Theme.AppCompat.Light.NoActionBar" />
 
-    <!-- dark theme. -->
-    <style name="DarkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">#212121</item>
-        <item name="colorPrimaryDark">#000000</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
-        <item name="backgroundColor">#161616</item>
-        <item name="cardBackColor">#212121</item>
-        <item name="titleColor">#FFFFFF</item>
-        <item name="contentColor">@android:color/darker_gray</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:itemBackground">#212121</item>
-        <item name="android:textColorPrimary">#ffffff</item>
-        <item name="android:textColorSecondary">@android:color/darker_gray</item>
-    </style>
+  <!-- dark theme. -->
+  <style name="DarkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">#212121</item>
+    <item name="colorPrimaryDark">#000000</item>
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+    <item name="backgroundColor">#161616</item>
+    <item name="cardBackColor">#212121</item>
+    <item name="titleColor">#FFFFFF</item>
+    <item name="contentColor">@android:color/darker_gray</item>
+    <item name="android:textColor">#ffffff</item>
+    <item name="android:itemBackground">#212121</item>
+    <item name="android:textColorPrimary">#ffffff</item>
+    <item name="android:textColorSecondary">@android:color/darker_gray</item>
+  </style>
 
-    <style name="AppBottomSheetDialogTheme"
-        parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/AppModalStyle</item>
-    </style>
+  <style name="AppBottomSheetDialogTheme"
+      parent="Theme.Design.Light.BottomSheetDialog">
+    <item name="bottomSheetStyle">@style/AppModalStyle</item>
+  </style>
 
-    <style name="AppModalStyle"
-        parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/background_bottomsheet_round_corner</item>
-    </style>
+  <style name="AppModalStyle"
+      parent="Widget.Design.BottomSheet.Modal">
+    <item name="android:background">@drawable/background_bottomsheet_round_corner</item>
+  </style>
 
-    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:background">?attr/cardBackColor</item>
-        <item name="android:textColorPrimary">?attr/titleColor</item>
-        <item name="android:textColorSecondary">?attr/contentColor</item>
-    </style>
+  <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <item name="android:background">?attr/cardBackColor</item>
+    <item name="android:textColorPrimary">?attr/titleColor</item>
+    <item name="android:textColorSecondary">?attr/contentColor</item>
+  </style>
 </resources>

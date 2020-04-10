@@ -16,14 +16,14 @@ public class SplashActivity extends AppCompatActivity {
     private static final String TAG = "SplashActivity";
     private final static int SPLASH_TIME_OUT = 2000;
 
-    ImageView splashLogo;
+//    ImageView splashLogo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: Inside of Splash activity onCreate");
         super.onCreate(savedInstanceState);
 
-        splashLogo = findViewById(R.id.splash_logo);
+//        splashLogo = findViewById(R.id.splash_logo);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
