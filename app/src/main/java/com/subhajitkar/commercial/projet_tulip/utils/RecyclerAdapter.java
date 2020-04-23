@@ -22,6 +22,7 @@ import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder> {
     private static final String TAG = "RecyclerAdapter";
@@ -29,7 +30,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     private ArrayList<ObjectNote> mNotesList;
     private static OnItemClickListener mListener;
     private static OnItemLongClickListener mLongClickListener;
-
+    private int randInt,prevcolor=-1;
     public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
     }
@@ -54,11 +55,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: binding data with the element layout views");
-
+        //getting random index for view color
+        do {
+            randInt = new Random().nextInt(7);
+        }while(randInt==prevcolor);
         //putting the values in the respective views
         holder.note_title.setText(mNotesList.get(position).getmNoteTitle());
         holder.note_body.setText(mNotesList.get(position).getmNoteContent());
         holder.note_date.setText(mNotesList.get(position).getmDateCreated());
+        holder.cardBorderView.setBackgroundColor(mContext.getResources().getColor(StaticFields.colorLists[randInt]));
+        prevcolor=randInt;
     }
 
     @Override
@@ -69,7 +75,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
         TextView note_title, note_body, note_date;
-        CardView cardNotes;
+        View cardBorderView;
 
         private RecyclerViewHolder(View itemView) {
             super(itemView);
@@ -77,7 +83,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
             note_title = itemView.findViewById(R.id.tv_note_title);
             note_body = itemView.findViewById(R.id.tv_note_body);
             note_date = itemView.findViewById(R.id.tv_note_date);
-            cardNotes = itemView.findViewById(R.id.card_notes);
+            cardBorderView = itemView.findViewById(R.id.view);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

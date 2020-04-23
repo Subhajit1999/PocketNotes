@@ -20,6 +20,7 @@ public class NotesDBHelper extends SQLiteOpenHelper {
     public final String ITEM_CONTENT = "content";
     public final String ITEM_CREATED_DATE = "dateCreated";
     public final String ITEM_UPDATED_DATE = "dateUpdated";
+    public final String ITEM_EDITOR_TYPE = "editorType";
 
     public NotesDBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -27,8 +28,8 @@ public class NotesDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_NOTES+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_ARCHIVE+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_NOTES+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR, editorType VARCHAR)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_ARCHIVE+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR, editorType VARCHAR)");
     }
 
     @Override
@@ -48,14 +49,14 @@ public class NotesDBHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public ContentValues createDBContentValue(String id, String title, String content, String dateCreated,String dateUpdated){
+    public ContentValues createDBContentValue(String id, String title, String content, String dateCreated,String dateUpdated, String editorType){
         Log.d(TAG, "createDBContentValue: making content values");
         ContentValues contentValues = new ContentValues();
         contentValues.put(ITEM_ID, id);
         contentValues.put(ITEM_TITLE, title);
         contentValues.put(ITEM_CONTENT, content);
         contentValues.put(ITEM_CREATED_DATE, dateCreated);
-        contentValues.put(ITEM_UPDATED_DATE, dateUpdated);
+        contentValues.put(ITEM_EDITOR_TYPE, editorType);
         return contentValues;
     }
 

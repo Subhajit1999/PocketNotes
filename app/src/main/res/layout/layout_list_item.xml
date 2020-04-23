@@ -17,6 +17,7 @@
         android:id="@+id/tv_dialog"
         android:text="Text file (.txt)"
         android:textSize="16sp"
+        android:fontFamily="@font/poppins_medium"
         android:textColor="?attr/contentColor"
-        android:layout_margin="16dp"/>
+        android:layout_margin="14dp"/>
 </LinearLayout>

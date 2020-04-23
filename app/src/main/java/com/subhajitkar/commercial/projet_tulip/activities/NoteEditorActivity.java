@@ -1,27 +1,22 @@
 package com.subhajitkar.commercial.projet_tulip.activities;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.Html;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 
 import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.fragments.SimpleNoteFragment;
+import com.subhajitkar.commercial.projet_tulip.utils.PortableContent;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 import java.text.SimpleDateFormat;
@@ -31,11 +26,11 @@ import java.util.Locale;
 public class NoteEditorActivity extends AppCompatActivity {
     private static final String TAG = "NoteEditorActivity";
 
-    private EditText noteTitle, noteContent;
     private LinearLayout root;
     private Cursor c;
-    private String intentFlag, UniqueId, createdDateAndTime, table, extension;
-    private int position, idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex;
+    private String intentFlag, UniqueId, createdDateAndTime, table;
+    private int position, idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex, editorTypeIndex;
+    private String sendNoteTitle, sendNoteContent, sendCreatedDateTime, sendNoteExt, editorType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +47,6 @@ public class NoteEditorActivity extends AppCompatActivity {
         //customizing the actionbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //initializing views
-        noteTitle = findViewById(R.id.et_note_title);
-        noteTitle.setText("");
-        noteContent = findViewById(R.id.et_note_content);
         root = findViewById(R.id.note_editor_linear);
 
         table = getIntent().getStringExtra(StaticFields.KEY_INTENT_TABLEID);
@@ -66,8 +58,9 @@ public class NoteEditorActivity extends AppCompatActivity {
             contentIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_CONTENT);
             createdDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_CREATED_DATE);
             updatedDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_UPDATED_DATE);
+            editorTypeIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_EDITOR_TYPE);
         }catch(Exception e){
-            Toast.makeText(getApplicationContext(),"Some error occurred. ("+e.getMessage()+")",Toast.LENGTH_SHORT).show();
+            new PortableContent().showSnackBar(root, "Some error occurred. ("+e.getMessage()+")", Snackbar.LENGTH_SHORT);
         }
 
         //getting the intent data
@@ -80,14 +73,17 @@ public class NoteEditorActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Edit note");
             c.moveToPosition(position);
             UniqueId = c.getString(idIndex);
-            noteTitle.setText(c.getString(titleIndex));
-            noteContent.setText(c.getString(contentIndex));
-            createdDateAndTime = c.getString(createdDateIndex);
-
-            Snackbar.make(root, Html.fromHtml("<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Created at: "+createdDateAndTime+"</font>"),Snackbar.LENGTH_INDEFINITE).show();
-        }else{
+            sendNoteTitle = c.getString(titleIndex);
+            sendNoteContent = c.getString(contentIndex);
+            editorType = c.getString(editorTypeIndex);
+            createdDateAndTime = sendCreatedDateTime = c.getString(createdDateIndex);
+        }else{      //if new
+            if (getIntent()!=null){
+                editorType = getIntent().getStringExtra(StaticFields.KEY_EDITOR_ID);
+            }
             getSupportActionBar().setTitle("Edit new note");
         }
+        launchFragment();
     }
 
     @Override
@@ -118,7 +114,8 @@ public class NoteEditorActivity extends AppCompatActivity {
                     sendIntent.setType("text/plain");
                     startActivity(Intent.createChooser(sendIntent, "Share note with..."));
                 }else{
-                    Toast.makeText(this,Html.fromHtml("<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Some error occurred.</font>"),Toast.LENGTH_SHORT).show();
+                    new PortableContent().showSnackBar(root,"<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Some error occurred.</font>",
+                            Snackbar.LENGTH_SHORT);
                 }
                 break;
         }
@@ -127,19 +124,23 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        supportFinishAfterTransition();
+        if (editorType.equals("simple")){
+            final SimpleNoteFragment fragment = (SimpleNoteFragment) getSupportFragmentManager().findFragmentByTag("TAG_SIMPLE_FRAGMENT");
+            if (fragment.backPressedSimple()) {
+                super.onBackPressed();
+                supportFinishAfterTransition();
+            }
+        }else{
+            super.onBackPressed();
+            supportFinishAfterTransition();
+        }
     }
 
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause: actual saving mechanism is here");
-        super.onPause();
-        //extracting edit-texts data
-        String mTitle = noteTitle.getText().toString();
-        String mContent = noteContent.getText().toString();
-        boolean AlreadyThere = false;
 
+        boolean AlreadyThere = false;
         //getting the created date and time
         String currentDateAndTime = getDateTime(StaticFields.visibleDateFormat);
         String noteUniqueId = getDateTime(StaticFields.UniqueIdDateFormat);
@@ -147,33 +148,64 @@ public class NoteEditorActivity extends AppCompatActivity {
         try {
             //checking if note already exists in the database or not
             if (intentFlag.equals("existing")) {  //note already exists
-                ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(UniqueId,
-                        mTitle, mContent, createdDateAndTime, currentDateAndTime);
-                StaticFields.dbHelper.updateNote(StaticFields.dbHelper.TABLE_NOTES, UniqueId, contentValues);
+                if (!StaticFields.noteTitle.isEmpty()) {
+                    Log.d(TAG, "onPause: updating note");
+                    ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(UniqueId,
+                            StaticFields.noteTitle, StaticFields.noteContent, createdDateAndTime, currentDateAndTime, editorType);
+                    StaticFields.dbHelper.updateNote(table, UniqueId, contentValues);
+                }
+                c = StaticFields.dbHelper.getData(table);
+                Log.d(TAG, "onPause: note updated successfully");
 
             } else {          //indicates note doesn't exist or first element
-                for (int i = 0; i < StaticFields.dbHelper.numberOfRows(StaticFields.dbHelper.TABLE_NOTES); i++) {
+                Log.d(TAG, "onPause: new note. NumberRows: "+StaticFields.dbHelper.numberOfRows(table));
+                for (int i = 0; i < StaticFields.dbHelper.numberOfRows(table); i++) {
                     c.moveToPosition(i);
-                    if (c.getString(titleIndex).equals(mTitle)) {  //if title matches to existing
+                    if (c.getString(titleIndex).equals(StaticFields.noteTitle)) {  //if title matches to existing
                         AlreadyThere = true;
                         break;
                     }
+                    Log.d(TAG, "onPause: checking note exists in the database or not");
                 }
-                if (!AlreadyThere && !mTitle.isEmpty()) {   //if new then insert
+                if (!AlreadyThere && !StaticFields.noteTitle.isEmpty()) {   //if new then insert
+                    Log.d(TAG, "onPause: new note saving into database");
                     ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(noteUniqueId,
-                            mTitle, mContent, currentDateAndTime, currentDateAndTime);
-                    StaticFields.dbHelper.insertNote(StaticFields.dbHelper.TABLE_NOTES,contentValues);
+                            StaticFields.noteTitle, StaticFields.noteContent, currentDateAndTime, currentDateAndTime,
+                            editorType);
+                    StaticFields.dbHelper.insertNote(table,contentValues);
+                    Log.d(TAG, "onPause: new note created");
                 }
             }
+            Log.d(TAG, "onPause: content:"+StaticFields.noteContent);
             c.close();
         }catch(Exception e){
-            Toast.makeText(getApplicationContext(),"Some error occurred. ("+e.getMessage()+")",Toast.LENGTH_SHORT).show();
+            new PortableContent().showSnackBar(root,"Some error occurred. ("+e.getMessage()+")",
+                    Snackbar.LENGTH_SHORT);
+            Log.d(TAG, "onPause: error occurred. Message: "+e.getMessage());
         }
+        super.onPause();
     }
 
     public String getDateTime(String format){
         Log.d(TAG, "getDateTime: getting current date, time in specified format");
         SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
         return sdf.format(new Date());
+    }
+
+    public void launchFragment(){
+        Log.d(TAG, "launchFragment: launching editor fragment");
+        Bundle bundle = new Bundle();
+        if (editorType.equals("simple")){
+            //launch simpleNoteFragment
+            SimpleNoteFragment fragment = new SimpleNoteFragment();
+            bundle.putString(StaticFields.KEY_EDITOR_TITLE, sendNoteTitle);
+            bundle.putString(StaticFields.KEY_EDITOR_CONTENT, sendNoteContent);
+            bundle.putString(StaticFields.KEY_EDITOR_DATECREATED, sendCreatedDateTime);
+            bundle.putString(StaticFields.KEY_EDITOR_INTENTFLAG, intentFlag);
+            fragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().add(R.id.editor_frag_container, fragment, "TAG_SIMPLE_FRAGMENT")
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

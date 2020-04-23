@@ -1,19 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_listFragment"
-    android:orientation="horizontal"
     tools:context=".fragments.NotesListFragment"
     android:background="?attr/backgroundColor">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/notes_recycler"
-        android:background="@android:color/transparent"
-        android:scrollbars="none"/>
+        android:layout_height="match_parent">
 
-    <include layout="@layout/recycler_menu_bottomsheet" />
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/layout_list_sort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="11dp"
+                android:layout_marginEnd="11dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:layout_gravity="end"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_sort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_list_sort" />
+                <TextView
+                    android:id="@+id/tv_sort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginRight="5dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="center_vertical"
+                    android:padding="5dp"
+                    android:text="Sort"
+                    android:textColor="?attr/titleColor" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/notes_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="11dp"
+                android:layout_marginEnd="11dp"
+                android:background="@android:color/transparent"
+                android:scrollbars="none" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_menu_add"
+            app:backgroundTint="@color/colorAccent"
+            app:tint="@android:color/white" />
+    </FrameLayout>
+<!--    <include layout="@layout/recycler_menu_bottomsheet" />-->
+</FrameLayout>

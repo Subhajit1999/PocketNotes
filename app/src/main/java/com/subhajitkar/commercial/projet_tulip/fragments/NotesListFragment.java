@@ -14,60 +14,59 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.Html;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.webkit.MimeTypeMap;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
-import com.subhajitkar.commercial.projet_tulip.activities.GeneralActivity;
-import com.subhajitkar.commercial.projet_tulip.activities.MainActivity;
 import com.subhajitkar.commercial.projet_tulip.activities.NoteEditorActivity;
-import com.subhajitkar.commercial.projet_tulip.fragments.EmptyNotesFragment;
 import com.subhajitkar.commercial.projet_tulip.utils.ListObject;
 import com.subhajitkar.commercial.projet_tulip.utils.ObjectNote;
 import com.subhajitkar.commercial.projet_tulip.utils.OnStorage;
+import com.subhajitkar.commercial.projet_tulip.utils.PortableContent;
 import com.subhajitkar.commercial.projet_tulip.utils.RecyclerAdapter;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Random;
 
 public class NotesListFragment extends Fragment implements RecyclerAdapter.OnItemClickListener, RecyclerAdapter.OnItemLongClickListener {
     private static final String TAG = "NotesListFragment";
     private RecyclerView notesRecycler;
-    private String table;
+    private String table, editorType;
     private RecyclerAdapter adapter;
-    private LinearLayout root;
+    private FrameLayout root;
     private Cursor c;
     private ArrayList<ObjectNote> dataList;
-    private int idIndex, titleIndex, contentIndex,createdDateIndex, updateDateIndex;
+    private int idIndex, titleIndex, contentIndex,createdDateIndex, updateDateIndex, editorTypeIndex;
     private static List<String> listPermissionsNeeded;
+    private LinearLayout sortLayout;
+    private FloatingActionButton fabMenu;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,6 +81,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         super.onViewCreated(view, savedInstanceState);
 
         root = view.findViewById(R.id.root_listFragment);
+        sortLayout = view.findViewById(R.id.layout_list_sort);
         //getting bundle data
         if (getArguments()!=null){
             table = getArguments().getString(StaticFields.KEY_FRAGMENT_MAINACTIVITY);
@@ -92,8 +92,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         //preparing recyclerListView
         notesRecycler = view.findViewById(R.id.notes_recycler);
         notesRecycler.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
-        notesRecycler.setLayoutManager(mLayoutManager);
+        notesRecycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
         notesRecycler.setItemAnimator(new DefaultItemAnimator());
 
         //setting up the adapter
@@ -105,6 +104,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         }else{
             emptyNotesScreen();
         }
+        configureFAB(view);
     }
 
     @Override
@@ -124,6 +124,36 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         if (!c.isClosed()){
             c.close();
         }
+        if (fabMenu.isShown()){
+            fabMenu.hide();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        retrieveDB();
+        if (!dataList.isEmpty()) {
+            adapter.notifyDataSetChanged();
+        }
+        Log.d(TAG, "onPause: updating dataList");
+        super.onResume();
+    }
+
+    public void configureFAB(View view){
+        Log.d(TAG, "configureFAB: creating fab button");
+        fabMenu = view.findViewById(R.id.fab_menu);
+        //item click action
+        fabMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //fab button click
+                Intent i = new Intent(getContext(), NoteEditorActivity.class);
+                i.putExtra(StaticFields.KEY_INTENT_EDITORACTIVITY,"new");
+                i.putExtra(StaticFields.KEY_INTENT_TABLEID,table);
+                i.putExtra(StaticFields.KEY_EDITOR_ID,"simple");
+                startActivity(i);
+            }
+        });
     }
 
     @Override
@@ -137,13 +167,18 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         final ImageView archiveLogo,shareLogo,saveLogo;
         final TextView archiveText;
         LinearLayout archive, delete, share, save;
+        View viewBSheet;
         final int mPosition = position;
         archive = dialogView.findViewById(R.id.bottomsheet_archive);
         archiveLogo = dialogView.findViewById(R.id.iv_bottomsheet_archive);
         archiveText = dialogView.findViewById(R.id.tv_bottomsheet_archive);
         shareLogo = dialogView.findViewById(R.id.iv_bottomsheet_share);
         saveLogo = dialogView.findViewById(R.id.iv_bottomsheet_save);
-        if (table.equals("notes")){
+        viewBSheet = dialogView.findViewById(R.id.view);
+        //random view color
+        int randInt = new Random().nextInt(7);
+        viewBSheet.setBackgroundColor(getResources().getColor(StaticFields.colorLists[randInt]));
+        if (table.equals(StaticFields.dbHelper.TABLE_NOTES)){
             if(StaticFields.darkThemeSet){
                 archiveLogo.setImageResource(R.drawable.ic_archive_dark);
             }else {
@@ -160,12 +195,9 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         }
         if(StaticFields.darkThemeSet){
             shareLogo.setImageResource(R.drawable.ic_share_dark);
-        }else {
-            shareLogo.setImageResource(R.drawable.ic_share);
-        }
-        if(StaticFields.darkThemeSet){
             saveLogo.setImageResource(R.drawable.ic_file_dark);
         }else {
+            shareLogo.setImageResource(R.drawable.ic_share);
             saveLogo.setImageResource(R.drawable.ic_file);
         }
         archive.setOnClickListener(new View.OnClickListener() {
@@ -215,8 +247,8 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         if (!permissionsGranted(getContext())){ //if permission not granted
             grantPermissionBottomSheet();
         }else{
-            c.moveToPosition(position);
-            OnStorage.createFile(c.getString(titleIndex),c.getString(contentIndex),root,getContext());
+            OnStorage.createFile(dataList.get(position).getmNoteTitle(),
+                    dataList.get(position).getmNoteContent(), root, getContext(), ".txt");
         }
     }
 
@@ -227,7 +259,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         c.moveToPosition(position);
         ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(c.getString(idIndex),
                 c.getString(titleIndex), c.getString(contentIndex), c.getString(createdDateIndex),
-                c.getString(updateDateIndex));
+                c.getString(updateDateIndex), c.getString(editorTypeIndex));
 
         String message="";
         if (table.equals(StaticFields.dbHelper.TABLE_NOTES)){
@@ -244,8 +276,8 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             message = "Note unarchived.";
         }
         adapter.notifyDataSetChanged();
-        Snackbar.make(root, Html.fromHtml("<font color=\""+getResources().getColor(R.color.colorAccent)+"\">"+message+"</font>"),Snackbar.LENGTH_SHORT).show();
-
+        new PortableContent().showSnackBar(root,"<font color=\""+getResources().getColor(R.color.colorAccent)+"\">"+message+"</font>",
+                Snackbar.LENGTH_SHORT);
         emptyNotesScreen();  //showing empty notes screen if list empty
     }
 
@@ -267,7 +299,8 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
                 StaticFields.dbHelper.deleteNote(table,c.getString(idIndex));
                 dataList.remove(position);
                 adapter.notifyDataSetChanged();
-                Snackbar.make(root,Html.fromHtml("<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Note deleted successfully.</font>"),Snackbar.LENGTH_SHORT).show();
+                new PortableContent().showSnackBar(root, "<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Note deleted successfully.</font>",
+                        Snackbar.LENGTH_SHORT);
                 emptyNotesScreen();
             }
         });
@@ -277,12 +310,11 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
 
     private void manageShare(int position, int shareType){
         Log.d(TAG, "manageShare: handling share action");
-        c.moveToPosition(position);
-        String noteTitle = c.getString(titleIndex);
-        String noteContent = c.getString(contentIndex);
+        String noteTitle = dataList.get(position).getmNoteTitle();
+        String noteContent = dataList.get(position).getmNoteContent();
 
         Intent sendIntent;
-        if (shareType==0){  //simple text format
+        if (shareType==0){  //simple text format (applicable only for simple note)
             sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, noteTitle + "\n\n" +
@@ -291,9 +323,9 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, "Share note with..."));
 
-        }else {  //text file format
+        }else {  //file format
             if (permissionsGranted(getContext())) {
-                File file = OnStorage.createFile(noteTitle, noteContent, root, getContext());  //getting created file
+                File file = OnStorage.createFile(noteTitle, noteContent, root, getContext(), ".txt");  //getting created file
                 Uri fileUri = FileProvider.getUriForFile(getContext(), getActivity().getPackageName(), file);
                 sendIntent = ShareCompat.IntentBuilder.from(getActivity())
                         .setType(getContext().getContentResolver().getType(fileUri))
@@ -331,6 +363,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             contentIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_CONTENT);
             createdDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_CREATED_DATE);
             updateDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_UPDATED_DATE);
+            editorTypeIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_EDITOR_TYPE);
 
             do{
              c.moveToNext();
@@ -339,7 +372,8 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
              String content = c.getString(contentIndex);
              String dateCreated = c.getString(createdDateIndex);
              String dateUpdated = c.getString(updateDateIndex);
-             dataList.add(new ObjectNote(id,title,content,dateCreated,dateUpdated));
+             String editorType = c.getString(editorTypeIndex);
+             dataList.add(new ObjectNote(id,title,content,dateCreated,dateUpdated,editorType));
             }while(!c.isLast());
 
         }catch(Exception e){
@@ -425,25 +459,27 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         builder.show();
     }
 
-    private void manageShareChooser(final int itemPosition){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.AppDialogTheme);
-        if(StaticFields.darkThemeSet){
+    private void manageShareChooser(final int itemPosition) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.AppDialogTheme);
+        if (StaticFields.darkThemeSet) {
             builder.setIcon(R.drawable.ic_share_dark);
-        }else {
+        } else {
             builder.setIcon(R.drawable.ic_share);
         }
         builder.setTitle("Share as:");
 
         final ArrayList<ListObject> list = new ArrayList<>();
-        list.add(new ListObject("Simple text",R.drawable.dialog_text,R.drawable.dialog_text_dark));
-        list.add(new ListObject("File format",R.drawable.ic_file,R.drawable.ic_file_dark));
+        list.add(new ListObject("Simple text", R.drawable.dialog_text, R.drawable.dialog_text_dark));
+        list.add(new ListObject("Text file", R.drawable.ic_file, R.drawable.ic_file_dark));
 
         class Adapter extends BaseAdapter {
 
             private ArrayList<ListObject> list;
-            private Adapter(ArrayList<ListObject> list){
+
+            private Adapter(ArrayList<ListObject> list) {
                 this.list = list;
             }
+
             @Override
             public int getCount() {
                 return list.size();
@@ -463,16 +499,16 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             public View getView(int position, View convertView, ViewGroup parent) {
 
                 ViewHolder viewHolder;
-                if (convertView==null) {
+                if (convertView == null) {
                     viewHolder = new ViewHolder();
                     LayoutInflater inflater = LayoutInflater.from(getContext());
-                    convertView = inflater.inflate(R.layout.layout_list_item,parent,false);
+                    convertView = inflater.inflate(R.layout.layout_list_item, parent, false);
                     //widgets initialization
                     viewHolder.text = convertView.findViewById(R.id.tv_dialog);
                     viewHolder.icon = convertView.findViewById(R.id.iv_dialog);
 
                     convertView.setTag(viewHolder);
-                }else{
+                } else {
                     viewHolder = (ViewHolder) convertView.getTag();
                 }
                 //adding data
@@ -481,7 +517,8 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
                 viewHolder.icon.setTag(position);
                 return convertView;
             }
-            class ViewHolder{
+
+            class ViewHolder {
                 TextView text;
                 ImageView icon;
             }
@@ -489,7 +526,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         builder.setAdapter(new Adapter(list), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                manageShare(itemPosition,which);
+                manageShare(itemPosition, which);
             }
         });
         builder.show();

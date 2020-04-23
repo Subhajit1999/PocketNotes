@@ -10,42 +10,8 @@
 	tools:context=".activities.NoteEditorActivity"
 	android:padding="5dp">
 
-	<ScrollView
+	<FrameLayout
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@android:color/transparent"
-			android:orientation="vertical" >
-
-			<EditText
-				android:id="@+id/et_note_title"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@android:color/transparent"
-				android:hint="@string/hint_note_title"
-				android:padding="5dp"
-				android:textColor="?attr/titleColor"
-				android:textColorHint="?attr/contentColor"
-				android:textSize="@dimen/noteTitleText"
-				android:textStyle="bold"
-				app:fontFamily="serif" />
-
-			<EditText
-				android:id="@+id/et_note_content"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="5dp"
-				android:background="@android:color/transparent"
-				android:hint="@string/hint_note_body"
-				android:padding="5dp"
-				android:textColor="?attr/contentColor"
-				android:textColorHint="?attr/contentColor"
-				android:textSize="@dimen/noteBodyText"
-				app:fontFamily="serif" />
-		</LinearLayout>
-	</ScrollView>
-
+		android:layout_height="match_parent"
+		android:id="@+id/editor_frag_container" />
 </LinearLayout>

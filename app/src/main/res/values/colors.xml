@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#f44336</color>
     <color name="colorAccent">#ff7961</color>
     <!--Custom colors-->
+    <color name="colorAccentLight">#FAA393</color>
     <color name="darkestGray">#5A5959</color>
     <color name="white">#fff</color>
 </resources>

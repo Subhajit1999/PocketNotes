@@ -3,15 +3,12 @@ package com.subhajitkar.commercial.projet_tulip.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
 import android.util.Log;
-import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.activities.GeneralActivity;
@@ -19,16 +16,14 @@ import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 import java.lang.reflect.Type;
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
     private static final String TAG = "SettingsFragment";
 
-    private SwitchPreference themeSwitch;
-    private Preference email,rate,share,toc,privacy,copyright;
+    private SwitchPreferenceCompat themeSwitch;
+    private androidx.preference.Preference email,rate,share,toc,privacy,copyright;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         if (StaticFields.darkThemeSet){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             getActivity().setTheme(R.style.DarkTheme);
@@ -36,13 +31,13 @@ public class SettingsFragment extends PreferenceFragment {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             getActivity().setTheme(R.style.AppTheme);
         }
-        addPreferencesFromResource(R.xml.preferences);
+        setPreferencesFromResource(R.xml.preferences,rootKey);
 
         //switch for theme change
-        themeSwitch = (SwitchPreference) findPreference("key_change_theme");
-        themeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        themeSwitch = (SwitchPreferenceCompat) findPreference("key_change_theme");
+        themeSwitch.setOnPreferenceChangeListener(new androidx.preference.Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
+            public boolean onPreferenceChange(androidx.preference.Preference preference, Object newValue) {
                 if (newValue.toString().equals("true")){
                     StaticFields.darkThemeSet = true;
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -50,6 +45,7 @@ public class SettingsFragment extends PreferenceFragment {
                     StaticFields.darkThemeSet = false;
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }
+                onCreatePreferences(savedInstanceState, rootKey);
                 return true;
             }
         });
@@ -60,10 +56,9 @@ public class SettingsFragment extends PreferenceFragment {
         }else{
             email.setIcon(R.drawable.settings_help);
         }
-        email.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        email.setOnPreferenceClickListener(new androidx.preference.Preference.OnPreferenceClickListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                //email intent
+            public boolean onPreferenceClick(androidx.preference.Preference preference) {
                 mailSupport();
                 return true;
             }
@@ -75,9 +70,9 @@ public class SettingsFragment extends PreferenceFragment {
         }else{
             rate.setIcon(R.drawable.settings_rate);
         }
-        rate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        rate.setOnPreferenceClickListener(new androidx.preference.Preference.OnPreferenceClickListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            public boolean onPreferenceClick(androidx.preference.Preference preference) {
                 //rate and review intent
                 rateApp();
                 return true;
@@ -90,9 +85,9 @@ public class SettingsFragment extends PreferenceFragment {
         }else{
             share.setIcon(R.drawable.ic_share);
         }
-        share.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        share.setOnPreferenceClickListener(new androidx.preference.Preference.OnPreferenceClickListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            public boolean onPreferenceClick(androidx.preference.Preference preference) {
                 //share app intent
                 shareApp();
                 return true;
@@ -100,9 +95,9 @@ public class SettingsFragment extends PreferenceFragment {
         });
         //terms and conditions web intent
         toc = findPreference("key_terms_conditions");
-        toc.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        toc.setOnPreferenceClickListener(new androidx.preference.Preference.OnPreferenceClickListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            public boolean onPreferenceClick(androidx.preference.Preference preference) {
                 //toc web intent
                 getActivity().finish();
                 Intent i = new Intent(getActivity(),GeneralActivity.class);
@@ -119,7 +114,7 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 //privacy policy web intent
-                getActivity().finish();   //first finishes the GeneralActivity instance
+                getActivity().finish();
                 Intent i = new Intent(getActivity(),GeneralActivity.class);  //taking back to the GeneralActivity through intent
                 i.putExtra(StaticFields.KEY_BUNDLE_GENERAL,"webView");  //with new fragment
                 i.putExtra(StaticFields.KEY_INTENT_WEBTITLE,"Privacy policy");

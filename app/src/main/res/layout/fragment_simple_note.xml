@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/simple_root"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".fragments.EmptyNotesFragment"
+    android:background="?attr/backgroundColor"
+    android:padding="5dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/et_note_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="@string/hint_note_title"
+                android:padding="5dp"
+                android:textColor="?attr/titleColor"
+                android:fontFamily="@font/poppins_semibold"
+                android:textColorHint="?attr/contentColor"
+                android:textSize="@dimen/noteTitleText"
+                android:textStyle="bold" />
+            <EditText
+                android:id="@+id/et_note_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:background="@android:color/transparent"
+                android:hint="@string/hint_note_body"
+                android:padding="5dp"
+                android:layout_marginTop="5dp"
+                android:textColor="?attr/contentColor"
+                android:textColorHint="?attr/contentColor"
+                android:textSize="@dimen/noteBodyText" />
+<!--            <com.google.android.material.card.MaterialCardView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:cardCornerRadius="3dp"-->
+<!--                android:theme="@style/MaterialCardTheme"-->
+<!--                app:cardElevation="3dp">-->
+<!--                -->
+<!--            </com.google.android.material.card.MaterialCardView>-->
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

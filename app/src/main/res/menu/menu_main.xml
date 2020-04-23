@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+        <item
+            android:title="Home"
+            android:id="@+id/menu_home"
+            android:icon="@drawable/ic_menu_home" />
+        <item
+            android:title="Starred"
+            android:id="@+id/menu_bookmark"
+            android:icon="@drawable/ic_menu_star" />
+        <item
+            android:title="Archived"
+            android:id="@+id/menu_archive"
+            android:icon="@drawable/ic_menu_archive" />
+        <item
+            android:title="Trash bin"
+            android:id="@+id/menu_recycle_bin"
+            android:icon="@drawable/ic_menu_trash" />
+    </group>
     <item
-        android:title="Archived"
-        android:id="@+id/menu_archive"
-        android:icon="@drawable/ic_menu_archive"
-        android:orderInCategory="1"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:title="Settings"
-        android:id="@+id/menu_settings"
-        android:icon="@drawable/ic_menu_settings"
-        android:orderInCategory="2"
-        app:showAsAction="never"/>
+        android:title="Options">
+        <menu>
+            <item
+                android:title="Settings"
+                android:id="@+id/menu_settings"
+                android:icon="@drawable/ic_menu_settings" />
+        </menu>
+    </item>
 </menu>

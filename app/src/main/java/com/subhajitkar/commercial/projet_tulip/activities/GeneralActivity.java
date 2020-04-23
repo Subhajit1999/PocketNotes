@@ -37,28 +37,7 @@ public class GeneralActivity extends AppCompatActivity {
 
     //customizing the actionbar
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    if (identifier.equals("archive")) {
-      getSupportActionBar().setTitle("Archives");
-
-      //adding fragment
-      NotesListFragment fragment = new NotesListFragment();
-      Bundle bundle = new Bundle();
-      bundle.putString(StaticFields.KEY_FRAGMENT_MAINACTIVITY,"archives");
-      fragment.setArguments(bundle);
-      getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment)
-              .commit();
-    }else if(identifier.equals("settings")){
-      getSupportActionBar().setTitle("Settings");
-
-      if (findViewById(R.id.fragment_container)!=null) {
-        //adding settings fragment
-        if (savedInstanceState!=null){
-          return;
-        }
-        //getSupportFragmentManager() is not working here
-        getFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
-      }
-    }else if (identifier.equals("webView")){
+    if (identifier.equals("webView")){
       Log.d(TAG, "onCreate: loading web fragment");
       getSupportActionBar().setTitle(title);
       WebFragment fragment = new WebFragment();
@@ -66,6 +45,19 @@ public class GeneralActivity extends AppCompatActivity {
       bundle.putString(StaticFields.KEY_INTENT_WEBVIEW,webUrl);
       fragment.setArguments(bundle);
       getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+
+    }else if (identifier.equals("settings")){
+      Log.d(TAG, "onCreate: settings fragment");
+      getSupportActionBar().setTitle("Settings");
+      if (findViewById(R.id.fragment_container)!=null) {
+        if (savedInstanceState!=null){
+          return;
+        }
+        SettingsFragment fragment4 = new SettingsFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment4)
+                .addToBackStack("settings")
+                .commit();
+      }
     }
   }
 
@@ -93,11 +85,11 @@ public class GeneralActivity extends AppCompatActivity {
   @Override
   public void onBackPressed() {
     super.onBackPressed();
-    if (identifier.equals("webView")) {
-      finish();  // finishes General Activity instance
-      Intent settingIntent = new Intent(this, GeneralActivity.class);  //taking back to the GenaralActivity
-      settingIntent.putExtra(StaticFields.KEY_BUNDLE_GENERAL,"settings");  //with settings fragment
-      startActivity(settingIntent);
+    if (identifier.equals("webView")) {  //when settings to webView
+      finish();
+      Intent i = new Intent(this, GeneralActivity.class);
+      i.putExtra(StaticFields.KEY_BUNDLE_GENERAL, "settings");
+      startActivity(i);
     } else {
       supportFinishAfterTransition();
     }

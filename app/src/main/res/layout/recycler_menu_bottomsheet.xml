@@ -19,10 +19,18 @@
         android:id="@+id/tv_bottomsheet"
         android:text="Choose option:"
         android:textSize="16sp"
+        android:fontFamily="@font/poppins_medium"
         android:textColor="?attr/contentColor"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp" />
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:id="@+id/view"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@android:color/holo_green_light" />
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -42,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:textSize="16sp"
+            android:fontFamily="@font/poppins_semibold"
             android:id="@+id/tv_bottomsheet_archive"
             android:textColor="?attr/titleColor"
             android:text="Archive"/>
@@ -66,6 +75,7 @@
             android:id="@+id/tv_bottomsheet_delete"
             android:textSize="16sp"
             android:layout_margin="8dp"
+            android:fontFamily="@font/poppins_semibold"
             android:textColor="@android:color/holo_red_dark"
             android:text="Delete note"/>
     </LinearLayout>
@@ -88,9 +98,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:textSize="16sp"
+            android:fontFamily="@font/poppins_semibold"
             android:id="@+id/tv_bottomsheet_save"
             android:textColor="?attr/titleColor"
-            android:text="Save as text file"/>
+            android:text="Export as file"/>
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
@@ -112,6 +123,7 @@
             android:id="@+id/tv_bottomsheet_share"
             android:layout_margin="8dp"
             android:textSize="16sp"
+            android:fontFamily="@font/poppins_semibold"
             android:textColor="?attr/titleColor"
             android:text="Share a copy"/>
     </LinearLayout>

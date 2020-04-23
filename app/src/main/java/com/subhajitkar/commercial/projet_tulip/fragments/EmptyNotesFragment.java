@@ -12,7 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.activities.NoteEditorActivity;
@@ -21,6 +25,8 @@ import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 public class EmptyNotesFragment extends Fragment {
     private static final String TAG = "EmptyNotesFragment";
 
+    private ImageView errorImage;
+    private TextView errorMsg;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -32,5 +38,13 @@ public class EmptyNotesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated: fragment view created");
+
+        errorImage = view.findViewById(R.id.iv_empty_notes);
+        errorMsg = view.findViewById(R.id.tv_empty_notes);
+        //Animations
+        Animation topAnim = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_slide_bottom);
+        Animation bottomAnim = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_slide_top);
+        errorImage.setAnimation(topAnim);
+        errorMsg.setAnimation(bottomAnim);
     }
 }

@@ -2,14 +2,15 @@ package com.subhajitkar.commercial.projet_tulip.utils;
 
 public class ObjectNote {
 
-    private String mNoteId, mNoteTitle, mNoteContent, mDateCreated, mdatedUpdated;
+    private String mNoteId, mNoteTitle, mNoteContent, mDateCreated, mdatedUpdated, mEditorType;
 
-    public ObjectNote(String noteId, String noteTitle, String noteContent, String dateCreated, String dateUpdated){
+    public ObjectNote(String noteId, String noteTitle, String noteContent, String dateCreated, String dateUpdated, String editorType){
         mNoteId = noteId;
         mNoteTitle = noteTitle;
         mNoteContent = noteContent;
         mDateCreated = dateCreated;
         mdatedUpdated = dateUpdated;
+        mEditorType = editorType;
     }
 
     public String getmNoteId() {
@@ -30,5 +31,9 @@ public class ObjectNote {
 
     public String getMdatedUpdated() {
         return mdatedUpdated;
+    }
+
+    public String getmEditorType() {
+        return mEditorType;
     }
 }

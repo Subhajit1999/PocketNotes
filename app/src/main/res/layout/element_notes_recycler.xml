@@ -1,58 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardCornerRadius="5dp"
+    android:orientation="vertical"
     android:id="@+id/card_notes"
-    android:background="?attr/cardBackColor"
-    app:cardElevation="5dp">
+    android:theme="@style/MaterialCardTheme"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:background="?attr/cardBackColor"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="?attr/cardBackColor">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:id="@+id/view"
+            android:background="@android:color/holo_green_light" />
+
+        <TextView
+            android:id="@+id/tv_note_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
+            android:textColor="?attr/contentColor"
+            android:background="?attr/cardBackColor"
+            android:padding="16dp"
+            android:text="@string/example_note_time" />
 
         <TextView
             android:id="@+id/tv_note_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:layout_marginStart="5dp"
-            android:maxLines="1"
-            android:text="@string/example_note_title"
+            android:fontFamily="@font/poppins_semibold"
+            android:includeFontPadding="false"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:maxLines="2"
+            android:background="?attr/cardBackColor"
+            android:text="Video call to client team"
             android:textColor="?attr/titleColor"
-            android:textSize="@dimen/noteTitleText"
-            android:textStyle="bold"
-            android:background="@android:color/transparent"
-            app:fontFamily="serif"
-            android:layout_marginLeft="5dp" />
+            android:textSize="18sp" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
+            android:maxLines="3"
+            android:textColor="?attr/titleColor"
             android:id="@+id/tv_note_body"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginBottom="3dp"
-            android:maxLines="2"
-            android:background="@android:color/transparent"
-            android:textColor="?attr/contentColor"
-            android:textSize="@dimen/noteBodyText"
-            android:text="@string/example_note_body"
-            android:layout_marginLeft="5dp" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_note_date"
-            android:layout_marginEnd="5dp"
-            android:gravity="end"
-            android:textSize="@dimen/noteCreatedDate"
-            android:background="@android:color/transparent"
-            android:textColor="@color/colorAccent"
-            android:text="@string/example_note_time"
-            android:layout_marginRight="5dp" />
+            android:padding="16dp"
+            android:background="?attr/cardBackColor"
+            android:text="This is just an example note description" />
+
+
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

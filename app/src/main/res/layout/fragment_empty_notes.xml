@@ -4,62 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     tools:context=".fragments.EmptyNotesFragment"
     android:background="?attr/backgroundColor">
 
-    <RelativeLayout
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:orientation="vertical">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/iv_empty_notes"
-            android:src="@drawable/empty_notes"
-            android:padding="65dp"
-            android:layout_margin="20dp"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_empty_notes"
-            android:text="@string/emptyscreen_message"
-            android:textSize="18sp"
-            android:textColor="?attr/contentColor"
-            android:gravity="center"
-            android:layout_alignBottom="@id/iv_empty_notes"/>
-    </RelativeLayout>
+        android:id="@+id/iv_empty_notes"
+        android:src="@drawable/empty_notepad"
+        android:padding="65dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_empty_notes"
+        android:text="@string/emptyscreen_message"
+        android:textSize="18sp"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="?attr/contentColor"
+        android:gravity="center" />
 
-    <!--    add note button-->
-    <!--    <LinearLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:orientation="horizontal"-->
-    <!--        android:id="@+id/add_button_layout"-->
-    <!--        android:visibility="gone"-->
-    <!--        android:background="@android:color/transparent"-->
-    <!--        android:gravity="center">-->
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:orientation="horizontal"-->
-    <!--            android:padding="5dp"-->
-    <!--            android:id="@+id/add_note"-->
-    <!--            android:background="@drawable/button_click">-->
-    <!--            <ImageView-->
-    <!--                android:layout_width="wrap_content"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:id="@+id/iv_add_notes"-->
-    <!--                android:src="@drawable/ic_menu_add"-->
-    <!--                android:padding="1dp"/>-->
-    <!--            <TextView-->
-    <!--                android:layout_width="wrap_content"-->
-    <!--                android:layout_height="match_parent"-->
-    <!--                android:id="@+id/tv_add_notes"-->
-    <!--                android:text="Add a note"-->
-    <!--                android:textStyle="bold"-->
-    <!--                android:textColor="@android:color/white"-->
-    <!--                android:padding="2dp" />-->
-    <!--        </LinearLayout>-->
-    <!--    </LinearLayout>-->
-</LinearLayout>
+    </LinearLayout>

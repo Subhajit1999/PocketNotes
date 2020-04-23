@@ -5,5 +5,9 @@
         <attr name="cardBackColor" format="color" />
         <attr name="titleColor" format="color" />
         <attr name="contentColor" format="color" />
+        <attr name="navHeaderColor" format="color" />
+        <attr name="colorNavigationItem" format="color" />
+        <attr name="colorNavigationItemSelected" format="color" />
+        <attr name="drawableNavigationItemBackground" format="reference" />
     </declare-styleable>
 </resources>
