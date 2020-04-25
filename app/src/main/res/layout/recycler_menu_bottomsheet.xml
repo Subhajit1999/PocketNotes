@@ -24,6 +24,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp" />
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
@@ -31,123 +32,10 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="@android:color/holo_green_light" />
-    <LinearLayout
-        android:orientation="horizontal"
+
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:id="@+id/bottomsheet_archive">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/iv_bottomsheet_archive"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_archive" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins_semibold"
-            android:id="@+id/tv_bottomsheet_archive"
-            android:textColor="?attr/titleColor"
-            android:text="Archive"/>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:id="@+id/bottomsheet_delete">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/iv_bottomsheet_delete"
-            android:src="@drawable/ic_delete"
-            android:layout_margin="16dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_bottomsheet_delete"
-            android:textSize="16sp"
-            android:layout_margin="8dp"
-            android:fontFamily="@font/poppins_semibold"
-            android:textColor="@android:color/holo_red_dark"
-            android:text="Delete note"/>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:id="@+id/bottomsheet_save">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/iv_bottomsheet_save"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_file" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins_semibold"
-            android:id="@+id/tv_bottomsheet_save"
-            android:textColor="?attr/titleColor"
-            android:text="Export as file"/>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:id="@+id/bottomsheet_share">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/iv_bottomsheet_share"
-            android:src="@drawable/ic_share"
-            android:layout_margin="16dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_bottomsheet_share"
-            android:layout_margin="8dp"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins_semibold"
-            android:textColor="?attr/titleColor"
-            android:text="Share a copy"/>
-    </LinearLayout>
-<!--    <LinearLayout-->
-<!--        android:orientation="horizontal"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="56dp"-->
-<!--        android:gravity="center_vertical"-->
-<!--        android:background="@drawable/item_click_effect"-->
-<!--        android:id="@+id/bottomsheet_color">-->
-
-<!--        <ImageView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:id="@+id/iv_bottomsheet_color"-->
-<!--            android:src="@drawable/ic_color"-->
-<!--            android:layout_margin="16dp"/>-->
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:id="@+id/tv_bottomsheet_color"-->
-<!--            android:layout_margin="8dp"-->
-<!--            android:textSize="16sp"-->
-<!--            android:textColor="@android:color/black"-->
-<!--            android:text="Change colour"/>-->
-<!--    </LinearLayout>-->
+        android:layout_height="wrap_content"
+        android:id="@+id/bottomSheet_recycler"
+        android:scrollbarSize="0dp" />
 </LinearLayout>

@@ -31,6 +31,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     private static OnItemClickListener mListener;
     private static OnItemLongClickListener mLongClickListener;
     private int randInt,prevcolor=-1;
+
     public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
     }

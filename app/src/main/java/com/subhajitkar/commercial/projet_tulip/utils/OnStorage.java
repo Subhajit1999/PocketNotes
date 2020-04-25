@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.chootdev.csnackbar.Duration;
+import com.chootdev.csnackbar.Type;
 import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
 
@@ -66,12 +68,12 @@ public class OnStorage {
             try {
                 if (!textFile.exists()){
                     boolean created = textFile.createNewFile();
-                    Snackbar.make(view, Html.fromHtml("<font color=\""+context.getResources().getColor(R.color.colorAccent)
-                            +"\">File saved to device successfully.</font>"),Snackbar.LENGTH_SHORT).show();
+                    new PortableContent().showSnackBar(context, Type.SUCCESS,
+                            "File saved to device successfully.", Duration.SHORT);
                     Log.d(TAG, "createFile: file created: "+created+", Path: "+textFile.getAbsolutePath());
                 }else{
-                    Snackbar.make(view, Html.fromHtml("<font color=\""+context.getResources().getColor(R.color.colorAccent)
-                            +"\">File is already saved, overwriting content./font>"),Snackbar.LENGTH_SHORT).show();
+                    new PortableContent().showSnackBar(context, Type.WARNING,
+                            "File is already saved, overwriting content.", Duration.SHORT);
                 }
                 if (textFile.isFile()) {  //if that's a file then write into it
                     FileOutputStream fos = new FileOutputStream(textFile);

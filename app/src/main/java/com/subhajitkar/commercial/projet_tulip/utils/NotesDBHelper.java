@@ -15,12 +15,17 @@ public class NotesDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "PocketNotes";
     public final String TABLE_NOTES = "notes";
     public final String TABLE_ARCHIVE = "archives";
+    public final String TABLE_STAR = "stars";
+    public final String TABLE_TRASH = "trash";
     public final String ITEM_ID = "id";
     public final String ITEM_TITLE = "title";
     public final String ITEM_CONTENT = "content";
     public final String ITEM_CREATED_DATE = "dateCreated";
     public final String ITEM_UPDATED_DATE = "dateUpdated";
     public final String ITEM_EDITOR_TYPE = "editorType";
+    public final String ITEM_STAR = "star";
+    public final String ITEM_TAG = "tag";
+    public final String ITEM_TABLE_ID = "tableId";
 
     public NotesDBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -28,8 +33,10 @@ public class NotesDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_NOTES+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR, editorType VARCHAR)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_ARCHIVE+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR, editorType VARCHAR)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_NOTES+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR, editorType VARCHAR, star VARCHAR, tag VARACHAR)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_ARCHIVE+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR, editorType VARCHAR, star VARCHAR, tag VARACHAR)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_STAR+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR, editorType VARCHAR, tableId VARCHAR, tag VARACHAR)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS "+TABLE_TRASH+" (id VARCHAR, title VARCHAR, content VARCHAR, dateCreated VARCHAR, dateUpdated VARCHAR, editorType VARCHAR, star VARCHAR, tag VARACHAR)");
     }
 
     @Override
@@ -49,14 +56,21 @@ public class NotesDBHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public ContentValues createDBContentValue(String id, String title, String content, String dateCreated,String dateUpdated, String editorType){
+    public ContentValues createDBContentValue(String table, String id, String title, String content, String dateCreated,String dateUpdated, String editorType, String tableId_star, String tag){
         Log.d(TAG, "createDBContentValue: making content values");
         ContentValues contentValues = new ContentValues();
         contentValues.put(ITEM_ID, id);
         contentValues.put(ITEM_TITLE, title);
         contentValues.put(ITEM_CONTENT, content);
         contentValues.put(ITEM_CREATED_DATE, dateCreated);
+        contentValues.put(ITEM_UPDATED_DATE, dateUpdated);
         contentValues.put(ITEM_EDITOR_TYPE, editorType);
+        if (table.equals(TABLE_STAR)){
+            contentValues.put(ITEM_TABLE_ID, tableId_star);
+        }else{
+            contentValues.put(ITEM_STAR, tableId_star);
+        }
+        contentValues.put(ITEM_TAG, tag);
         return contentValues;
     }
 

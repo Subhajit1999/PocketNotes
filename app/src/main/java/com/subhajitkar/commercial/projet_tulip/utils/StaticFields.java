@@ -1,15 +1,11 @@
 package com.subhajitkar.commercial.projet_tulip.utils;
 
 import android.Manifest;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
-
 import com.subhajitkar.commercial.projet_tulip.R;
+
+import java.util.ArrayList;
 
 public class StaticFields {
   private static final String TAG = "StaticFields";
@@ -40,4 +36,14 @@ public class StaticFields {
   public static int[] colorLists = new int[]{android.R.color.holo_blue_bright,android.R.color.holo_green_light,android.R.color.holo_blue_light,
           android.R.color.holo_orange_light,android.R.color.holo_purple,android.R.color.holo_red_light
           , R.color.darkestGray};
+
+  public static ArrayList<ListObject> listNewNote;
+  public static void newNoteListInit() {
+    Log.d(TAG, "newNoteListInit: initializing new note options list");
+    listNewNote = new ArrayList<>();
+    listNewNote.add(new ListObject("Simple note", R.drawable.ic_file, R.drawable.ic_file_dark));
+    listNewNote.add(new ListObject("Image note", R.drawable.ic_fab_image, R.drawable.ic_fab_image_dark));
+    listNewNote.add(new ListObject("Voice note", R.drawable.ic_fab_voice, R.drawable.ic_fab_voice_dark));
+    listNewNote.add(new ListObject("Todo list", R.drawable.ic_fab_todo, R.drawable.ic_fab_todo_dark));
+  }
 }

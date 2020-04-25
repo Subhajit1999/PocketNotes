@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 
 
+import com.chootdev.csnackbar.Duration;
+import com.chootdev.csnackbar.Type;
 import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.fragments.SimpleNoteFragment;
@@ -29,8 +31,8 @@ public class NoteEditorActivity extends AppCompatActivity {
     private LinearLayout root;
     private Cursor c;
     private String intentFlag, UniqueId, createdDateAndTime, table;
-    private int position, idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex, editorTypeIndex;
-    private String sendNoteTitle, sendNoteContent, sendCreatedDateTime, sendNoteExt, editorType;
+    private int position, idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex, editorTypeIndex, starIndex, tagIndex;
+    private String sendNoteTitle, sendNoteContent, sendCreatedDateTime, editorType, star, tag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +61,11 @@ public class NoteEditorActivity extends AppCompatActivity {
             createdDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_CREATED_DATE);
             updatedDateIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_UPDATED_DATE);
             editorTypeIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_EDITOR_TYPE);
+            starIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_STAR);
+            tagIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_TAG);
         }catch(Exception e){
-            new PortableContent().showSnackBar(root, "Some error occurred. ("+e.getMessage()+")", Snackbar.LENGTH_SHORT);
+            new PortableContent().showSnackBar(this, Type.ERROR, "Some error occurred. ("+e.getMessage()+")",
+                    Duration.SHORT);
         }
 
         //getting the intent data
@@ -76,6 +81,8 @@ public class NoteEditorActivity extends AppCompatActivity {
             sendNoteTitle = c.getString(titleIndex);
             sendNoteContent = c.getString(contentIndex);
             editorType = c.getString(editorTypeIndex);
+            star = c.getString(starIndex);
+            tag = c.getString(tagIndex);
             createdDateAndTime = sendCreatedDateTime = c.getString(createdDateIndex);
         }else{      //if new
             if (getIntent()!=null){
@@ -114,8 +121,8 @@ public class NoteEditorActivity extends AppCompatActivity {
                     sendIntent.setType("text/plain");
                     startActivity(Intent.createChooser(sendIntent, "Share note with..."));
                 }else{
-                    new PortableContent().showSnackBar(root,"<font color=\""+getResources().getColor(R.color.colorAccent)+"\">Some error occurred.</font>",
-                            Snackbar.LENGTH_SHORT);
+                    new PortableContent().showSnackBar(this, Type.ERROR, "Some error occurred",
+                            Duration.SHORT);
                 }
                 break;
         }
@@ -150,8 +157,9 @@ public class NoteEditorActivity extends AppCompatActivity {
             if (intentFlag.equals("existing")) {  //note already exists
                 if (!StaticFields.noteTitle.isEmpty()) {
                     Log.d(TAG, "onPause: updating note");
-                    ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(UniqueId,
-                            StaticFields.noteTitle, StaticFields.noteContent, createdDateAndTime, currentDateAndTime, editorType);
+                    ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(table, UniqueId,
+                            StaticFields.noteTitle, StaticFields.noteContent, createdDateAndTime, currentDateAndTime, editorType
+                    ,star, tag);
                     StaticFields.dbHelper.updateNote(table, UniqueId, contentValues);
                 }
                 c = StaticFields.dbHelper.getData(table);
@@ -169,9 +177,9 @@ public class NoteEditorActivity extends AppCompatActivity {
                 }
                 if (!AlreadyThere && !StaticFields.noteTitle.isEmpty()) {   //if new then insert
                     Log.d(TAG, "onPause: new note saving into database");
-                    ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(noteUniqueId,
+                    ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(table, noteUniqueId,
                             StaticFields.noteTitle, StaticFields.noteContent, currentDateAndTime, currentDateAndTime,
-                            editorType);
+                            editorType, "false", null);
                     StaticFields.dbHelper.insertNote(table,contentValues);
                     Log.d(TAG, "onPause: new note created");
                 }
@@ -179,8 +187,8 @@ public class NoteEditorActivity extends AppCompatActivity {
             Log.d(TAG, "onPause: content:"+StaticFields.noteContent);
             c.close();
         }catch(Exception e){
-            new PortableContent().showSnackBar(root,"Some error occurred. ("+e.getMessage()+")",
-                    Snackbar.LENGTH_SHORT);
+            new PortableContent().showSnackBar(this, Type.ERROR, "Some error occured. ("+e.getMessage()+")",
+                    Duration.SHORT);
             Log.d(TAG, "onPause: error occurred. Message: "+e.getMessage());
         }
         super.onPause();

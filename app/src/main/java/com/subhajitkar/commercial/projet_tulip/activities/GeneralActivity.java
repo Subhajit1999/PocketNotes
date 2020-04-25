@@ -2,6 +2,7 @@ package com.subhajitkar.commercial.projet_tulip.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,9 +54,7 @@ public class GeneralActivity extends AppCompatActivity {
         if (savedInstanceState!=null){
           return;
         }
-        SettingsFragment fragment4 = new SettingsFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment4)
-                .addToBackStack("settings")
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new SettingsFragment())
                 .commit();
       }
     }

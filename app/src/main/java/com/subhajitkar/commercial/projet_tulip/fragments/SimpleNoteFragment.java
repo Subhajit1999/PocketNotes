@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.chootdev.csnackbar.Duration;
+import com.chootdev.csnackbar.Type;
 import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.utils.PortableContent;
@@ -45,8 +47,7 @@ public class SimpleNoteFragment extends Fragment {
                 //set the data
                 noteTitle.setText(title);
                 noteContent.setText(content);
-                new PortableContent().showSnackBar(root, "<font color=\"" + getResources().getColor(R.color.colorAccent) + "\">Created at: " + dateCreated + "</font>",
-                        Snackbar.LENGTH_INDEFINITE);
+                new PortableContent().showSnackBar(getContext(), Type.UPDATE,">Created at: " + dateCreated, Duration.INFINITE);
             }
         }
     }
