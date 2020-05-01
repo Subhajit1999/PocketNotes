@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -32,9 +31,7 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.chootdev.csnackbar.Duration;
 import com.chootdev.csnackbar.Type;
@@ -44,7 +41,7 @@ import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.activities.NoteEditorActivity;
 import com.subhajitkar.commercial.projet_tulip.utils.BottomSheetRecyclerAdapter;
 import com.subhajitkar.commercial.projet_tulip.utils.DialogListAdapter;
-import com.subhajitkar.commercial.projet_tulip.utils.ListObject;
+import com.subhajitkar.commercial.projet_tulip.utils.DataModel;
 import com.subhajitkar.commercial.projet_tulip.utils.ObjectNote;
 import com.subhajitkar.commercial.projet_tulip.utils.OnStorage;
 import com.subhajitkar.commercial.projet_tulip.utils.PortableContent;
@@ -69,6 +66,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
     private static List<String> listPermissionsNeeded;
     private LinearLayout sortLayout;
     private FloatingActionButton addNoteMenu;
+    private PortableContent portableContent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,6 +82,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
 
         root = view.findViewById(R.id.root_listFragment);
         sortLayout = view.findViewById(R.id.layout_list_sort);
+        portableContent = new PortableContent(getContext());
         //getting bundle data
         if (getArguments()!=null){
             table = getArguments().getString(StaticFields.KEY_FRAGMENT_MAINACTIVITY);
@@ -100,10 +99,8 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         //setting up the adapter
         if (!dataList.isEmpty()) {
             adapter = new RecyclerAdapter(getContext(),dataList);
-//            if (table.equals(StaticFields.dbHelper.TABLE_NOTES)||table.equals(StaticFields.dbHelper.TABLE_ARCHIVE)){
-                adapter.setOnItemClickListener(this);
-                adapter.setOnItemLongClickListener(this);
-//            }
+            adapter.setOnItemClickListener(this);
+            adapter.setOnItemLongClickListener(this);
             notesRecycler.setAdapter(adapter);
         }else{
             emptyNotesScreen();
@@ -114,11 +111,16 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
     @Override
     public void onItemClick(int position) {
         Log.d(TAG, "onItemClick: recycler list item click action, position: "+position);
-        Intent i = new Intent(getContext(), NoteEditorActivity.class);
-        i.putExtra(StaticFields.KEY_INTENT_EDITORACTIVITY,"existing");
-        i.putExtra(StaticFields.KEY_INTENT_TABLEID,table);
-        i.putExtra(StaticFields.KEY_INTENT_LISTPOSITION,position);
-        startActivity(i);
+        if (!table.equals(StaticFields.dbHelper.TABLE_STAR)) {
+            Log.d(TAG, "onItemClick: inside if statement");
+            Intent i = new Intent(getContext(), NoteEditorActivity.class);
+            i.putExtra(StaticFields.KEY_INTENT_EDITORACTIVITY, "existing");
+            i.putExtra(StaticFields.KEY_INTENT_TABLEID, table);
+            i.putExtra(StaticFields.KEY_INTENT_LISTPOSITION, position);
+            startActivity(i);
+        }else{
+
+        }
     }
 
     @Override
@@ -144,10 +146,15 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         Log.d(TAG, "configureFAB: creating fab button");
         addNoteMenu = view.findViewById(R.id.fab_new_note);
 
+        if (table.equals(StaticFields.dbHelper.TABLE_NOTES)) {  //fab only for home section in case of NotesListFragment
+            addNoteMenu.setVisibility(View.VISIBLE);
+        }else{
+            addNoteMenu.setVisibility(View.GONE);
+        }
         //creating new note menu
         StaticFields.newNoteListInit();
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.AppDialogTheme);
-        builder.setAdapter(new DialogListAdapter(getContext(), StaticFields.listNewNote), new DialogInterface.OnClickListener() {
+        builder.setAdapter(new DialogListAdapter(getContext(), StaticFields.listNewNote, 0), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent i = new Intent(getActivity(), NoteEditorActivity.class);
@@ -188,7 +195,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         int randInt = new Random().nextInt(7);
         viewBSheet.setBackgroundColor(getResources().getColor(StaticFields.colorLists[randInt]));
         //preparing data
-        ArrayList<ListObject> itemsList = setUpbottomSheetItems(table, position);
+        ArrayList<DataModel> itemsList = setUpbottomSheetItems(table, position);
         //setting up adapter
         BottomSheetRecyclerAdapter adapter = new BottomSheetRecyclerAdapter(getContext(), itemsList, dialog);
         bottomsheetRecycler.setAdapter(adapter);
@@ -196,45 +203,46 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         dialog.setContentView(dialogView);
         dialog.show();
     }
-    private ArrayList<ListObject> setUpbottomSheetItems(String table, int position){
+
+    private ArrayList<DataModel> setUpbottomSheetItems(String table, int position){
         Log.d(TAG, "setUpbottomSheetItems: setting up bottomsheet items");
-        ArrayList<ListObject> itemsList = new ArrayList<>();
+        ArrayList<DataModel> itemsList = new ArrayList<>();
 
         if (table.equals(StaticFields.dbHelper.TABLE_NOTES)){  //for notes table
-            itemsList.add(new ListObject("Archive", R.drawable.ic_archive, R.drawable.ic_archive_dark,
+            itemsList.add(new DataModel("Archive", R.drawable.ic_archive, R.drawable.ic_archive_dark,
                     StaticFields.darkThemeSet?android.R.color.white:android.R.color.black));
         }else if (table.equals(StaticFields.dbHelper.TABLE_ARCHIVE)){  //for archives table
-            itemsList.add(new ListObject("Unarchive", R.drawable.ic_unarchive, R.drawable.ic_unarchive_dark,
+            itemsList.add(new DataModel("Unarchive", R.drawable.ic_unarchive, R.drawable.ic_unarchive_dark,
                     StaticFields.darkThemeSet?android.R.color.white:android.R.color.black));
         }
         if (table.equals(StaticFields.dbHelper.TABLE_NOTES)||table.equals(StaticFields.dbHelper.TABLE_ARCHIVE)) {
             if (!dataList.get(position).getIsStarred()) {
                 // star/unStar check
-                itemsList.add(new ListObject("Add to star", R.drawable.ic_star, R.drawable.ic_star_dark,
+                itemsList.add(new DataModel("Add to star", R.drawable.ic_star, R.drawable.ic_star_dark,
                         StaticFields.darkThemeSet ? android.R.color.white : android.R.color.black));
             } else {
-                itemsList.add(new ListObject("remove star", R.drawable.ic_star, R.drawable.ic_star_dark,
+                itemsList.add(new DataModel("Remove star", R.drawable.ic_star, R.drawable.ic_star_dark,
                         StaticFields.darkThemeSet ? android.R.color.white : android.R.color.black));
             }
         }
         if (table.equals(StaticFields.dbHelper.TABLE_STAR)){
-            itemsList.add(new ListObject("remove star", R.drawable.ic_star, R.drawable.ic_star_dark,
+            itemsList.add(new DataModel("Remove star", R.drawable.ic_star, R.drawable.ic_star_dark,
                     StaticFields.darkThemeSet ? android.R.color.white : android.R.color.black));
         }
         if (table.equals(StaticFields.dbHelper.TABLE_NOTES)||table.equals(StaticFields.dbHelper.TABLE_ARCHIVE)||
         table.equals(StaticFields.dbHelper.TABLE_TRASH)){
-            itemsList.add(new ListObject("Delete", R.drawable.ic_delete, R.drawable.ic_delete,
+            itemsList.add(new DataModel("Delete", R.drawable.ic_delete, R.drawable.ic_delete,
                     android.R.color.holo_red_dark));
         }
         if (table.equals(StaticFields.dbHelper.TABLE_NOTES)||table.equals(StaticFields.dbHelper.TABLE_ARCHIVE)||
                 table.equals(StaticFields.dbHelper.TABLE_STAR)) {
-            itemsList.add(new ListObject("Save", R.drawable.ic_file, R.drawable.ic_file_dark,
+            itemsList.add(new DataModel("Save", R.drawable.ic_file, R.drawable.ic_file_dark,
                     StaticFields.darkThemeSet ? android.R.color.white : android.R.color.black));
-            itemsList.add(new ListObject("Share", R.drawable.ic_share, R.drawable.ic_share_dark,
+            itemsList.add(new DataModel("Share", R.drawable.ic_share, R.drawable.ic_share_dark,
                     StaticFields.darkThemeSet ? android.R.color.white : android.R.color.black));
         }
         if (table.equals(StaticFields.dbHelper.TABLE_TRASH)){
-            itemsList.add(new ListObject("Restore", R.drawable.ic_restore, R.drawable.ic_restore_dark,
+            itemsList.add(new DataModel("Restore", R.drawable.ic_restore, R.drawable.ic_restore_dark,
                     StaticFields.darkThemeSet ? android.R.color.white : android.R.color.black));
         }
         return itemsList;
@@ -281,10 +289,11 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
                     itemNote.getmNoteId(), itemNote.getmNoteTitle(), itemNote.getmNoteContent(), itemNote.getmDateCreated(),
                     itemNote.getMdatedUpdated(), itemNote.getmEditorType(), tableId, itemNote.getmTag());
 
-            StaticFields.dbHelper.updateNote(StaticFields.dbHelper.TABLE_STAR,itemNote.getmNoteId(),contentValuesStar);
+            StaticFields.dbHelper.updateNote(StaticFields.dbHelper.TABLE_STAR,
+                    itemNote.getmNoteId(), contentValuesStar);
         }
         adapter.notifyDataSetChanged();
-        new PortableContent().showSnackBar(getContext(), Type.SUCCESS, message, Duration.SHORT);
+        portableContent.showSnackBar(Type.SUCCESS, message, Duration.SHORT);
         emptyNotesScreen();  //showing empty notes screen if list empty
     }
 
@@ -298,7 +307,15 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
         }else{
             builder.setIcon(R.drawable.dialog_warning);
         }
-        builder.setMessage("Are you sure you want to delete the note from the "+table+" list?");
+        final String dialogMsg, successMsg;
+        if (!table.equals(StaticFields.dbHelper.TABLE_TRASH)) {
+            dialogMsg = "Are you sure you want to delete the note from the "+table+" list?";
+            successMsg = "Note moved to trash successfully.";
+        }else{
+            dialogMsg = "Are you sure you want to delete the note permanently?";
+            successMsg = "Note deleted from trash successfully";
+        }
+        builder.setMessage(dialogMsg);
         //preparing data
         ObjectNote itemNote = dataList.get(position);
         final ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(StaticFields.dbHelper.TABLE_TRASH,
@@ -309,11 +326,13 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //re-requesting permissions
-                StaticFields.dbHelper.insertNote(StaticFields.dbHelper.TABLE_TRASH, contentValues);
+                if (!table.equals(StaticFields.dbHelper.TABLE_TRASH)) {
+                    StaticFields.dbHelper.insertNote(StaticFields.dbHelper.TABLE_TRASH, contentValues);
+                }
                 StaticFields.dbHelper.deleteNote(table,c.getString(idIndex));
                 dataList.remove(position);
                 adapter.notifyDataSetChanged();
-                new PortableContent().showSnackBar(getContext(),Type.SUCCESS,"Note moved to trash successfully.", Duration.SHORT);
+                portableContent.showSnackBar(Type.SUCCESS,successMsg, Duration.SHORT);
                 emptyNotesScreen();
             }
         });
@@ -366,21 +385,56 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
     private void manageStar(int position){
         Log.d(TAG, "manageStar: manage star/bookmarking notes");
         ObjectNote itemNote = dataList.get(position);
-        ContentValues contentValuesStar = StaticFields.dbHelper.createDBContentValue(StaticFields.dbHelper.TABLE_STAR,
-                itemNote.getmNoteId(), itemNote.getmNoteTitle(), itemNote.getmNoteContent(), itemNote.getmDateCreated(),
-                itemNote.getMdatedUpdated(), itemNote.getmEditorType(), table, itemNote.getmTag());
+        boolean Starred;
+        String tableName;
+        if (!table.equals(StaticFields.dbHelper.TABLE_STAR)) {
+            ContentValues contentValuesStar = StaticFields.dbHelper.createDBContentValue(StaticFields.dbHelper.TABLE_STAR,
+                    itemNote.getmNoteId(), itemNote.getmNoteTitle(), itemNote.getmNoteContent(), itemNote.getmDateCreated(),
+                    itemNote.getMdatedUpdated(), itemNote.getmEditorType(), table, itemNote.getmTag());
 
-        ContentValues contentValuesTable = StaticFields.dbHelper.createDBContentValue(table,
+            if (!itemNote.getIsStarred()) {
+                StaticFields.dbHelper.insertNote(StaticFields.dbHelper.TABLE_STAR, contentValuesStar);
+                Starred = true;
+            } else {
+                StaticFields.dbHelper.deleteNote(StaticFields.dbHelper.TABLE_STAR, itemNote.getmNoteId());
+                Starred = false;
+            }
+            tableName = table;
+            //updating element of that position in the temp arrayList
+            dataList.set(position, new ObjectNote(itemNote.getmNoteId(), itemNote.getmNoteTitle(),
+                    itemNote.getmNoteContent(), itemNote.getmDateCreated(), itemNote.getMdatedUpdated(),
+                    itemNote.getmEditorType(), Starred, itemNote.getmTag()));
+        }else{  //if star list
+            StaticFields.dbHelper.deleteNote(table, itemNote.getmNoteId());
+            Starred = false;
+            dataList.remove(position);
+            tableName = itemNote.getmTableId();
+        }
+        ContentValues contentValuesTable = StaticFields.dbHelper.createDBContentValue(tableName,
                 itemNote.getmNoteId(), itemNote.getmNoteTitle(), itemNote.getmNoteContent(), itemNote.getmDateCreated(),
-                itemNote.getMdatedUpdated(), itemNote.getmEditorType(), "true", itemNote.getmTag());
+                itemNote.getMdatedUpdated(), itemNote.getmEditorType(), String.valueOf(Starred), itemNote.getmTag());
 
-        StaticFields.dbHelper.insertNote(StaticFields.dbHelper.TABLE_STAR,contentValuesStar);
-        StaticFields.dbHelper.updateNote(table,itemNote.getmNoteId(),contentValuesTable);
-        //updating element of that position in the temp arrayList
-        dataList.set(position, new ObjectNote(itemNote.getmNoteId(), itemNote.getmNoteTitle(),
-                itemNote.getmNoteContent(), itemNote.getmDateCreated(), itemNote.getMdatedUpdated(),
-                itemNote.getmEditorType(),true, itemNote.getmTag()));
+        StaticFields.dbHelper.updateNote(tableName,  itemNote.getmNoteId(), contentValuesTable);
         adapter.notifyDataSetChanged();
+        emptyNotesScreen();
+    }
+
+    private void manageRestore(int position){
+        Log.d(TAG, "manageRestore: restoring note from trash table.");
+            ObjectNote itemNote = dataList.get(position);
+        Log.d(TAG, "manageRestore: tableId: "+itemNote.getmTableId());
+            final ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(StaticFields.dbHelper.TABLE_NOTES,
+                    itemNote.getmNoteId(), itemNote.getmNoteTitle(), itemNote.getmNoteContent(), itemNote.getmDateCreated(),
+                    itemNote.getMdatedUpdated(), itemNote.getmEditorType(), String.valueOf(itemNote.getIsStarred()),
+                    itemNote.getmTag());
+            //insert into the destination table & remove from trash as well as datalist
+            StaticFields.dbHelper.insertNote(StaticFields.dbHelper.TABLE_NOTES, contentValues);
+            StaticFields.dbHelper.deleteNote(StaticFields.dbHelper.TABLE_TRASH,itemNote.getmNoteId());
+            //update adapter
+            dataList.remove(position);
+            adapter.notifyDataSetChanged();
+            portableContent.showSnackBar(Type.SUCCESS,"Note successfully restored from trash.", Duration.SHORT);
+            emptyNotesScreen();
     }
 
     private void retrieveDB(){
@@ -514,15 +568,15 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
             dialogIcon = R.drawable.ic_share;
         }
 
-        final ArrayList<ListObject> list = new ArrayList<>();
-        list.add(new ListObject("Simple text", R.drawable.dialog_text, R.drawable.dialog_text_dark));
-        list.add(new ListObject("Text file", R.drawable.ic_file, R.drawable.ic_file_dark));
+        final ArrayList<DataModel> list = new ArrayList<>();
+        list.add(new DataModel("Simple text", R.drawable.dialog_text, R.drawable.dialog_text_dark));
+        list.add(new DataModel("Text file", R.drawable.ic_file, R.drawable.ic_file_dark));
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.AppDialogTheme);
         builder.setTitle("Share note as:");
         builder.setIcon(dialogIcon);
 
-        builder.setAdapter(new DialogListAdapter(getContext(), list), new DialogInterface.OnClickListener() {
+        builder.setAdapter(new DialogListAdapter(getContext(), list, 0), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 manageShare(itemPosition, which);
@@ -535,7 +589,7 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
     @Override
     public void onBottomSheetItemClick(int position) {
         //bottomSheet item click action
-        if (table.equals(StaticFields.dbHelper.TABLE_NOTES)||table.equals(StaticFields.dbHelper.TABLE_ARCHIVE)){
+        if (table.equals(StaticFields.dbHelper.TABLE_NOTES) || table.equals(StaticFields.dbHelper.TABLE_ARCHIVE)) {
             switch(position){
                 case 0: //archive/unarchive
                     manageArchive(mNotePosition);
@@ -549,8 +603,29 @@ public class NotesListFragment extends Fragment implements RecyclerAdapter.OnIte
                 case 3: //save
                     manageSave(mNotePosition);
                     break;
-                case 4: //share
+                case 4:  //share
                     manageShareChooser(mNotePosition);
+                    break;
+            }
+        }else if(table.equals(StaticFields.dbHelper.TABLE_STAR)){
+            switch(position){
+                case 0: //star
+                    manageStar(mNotePosition);
+                    break;
+                case 1: //save
+                    manageSave(mNotePosition);
+                    break;
+                case 2:  //share
+                    manageShareChooser(mNotePosition);
+                    break;
+            }
+        }else{
+            switch(position){
+                case 0: //delete
+                    manageDelete(mNotePosition);
+                    break;
+                case 1: //restore
+                    manageRestore(mNotePosition);
                     break;
             }
         }

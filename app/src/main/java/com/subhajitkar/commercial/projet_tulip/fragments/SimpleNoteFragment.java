@@ -47,7 +47,7 @@ public class SimpleNoteFragment extends Fragment {
                 //set the data
                 noteTitle.setText(title);
                 noteContent.setText(content);
-                new PortableContent().showSnackBar(getContext(), Type.UPDATE,">Created at: " + dateCreated, Duration.INFINITE);
+                new PortableContent(getContext()).showSnackBar(Type.UPDATE,"Created at: " + dateCreated, Duration.INFINITE);
             }
         }
     }
@@ -75,5 +75,9 @@ public class SimpleNoteFragment extends Fragment {
             StaticFields.noteExtension = "";
         }
         return true;
+    }
+
+    public EditText getEditText() {
+        return noteContent;
     }
 }

@@ -68,11 +68,11 @@ public class OnStorage {
             try {
                 if (!textFile.exists()){
                     boolean created = textFile.createNewFile();
-                    new PortableContent().showSnackBar(context, Type.SUCCESS,
+                    new PortableContent(context).showSnackBar(Type.SUCCESS,
                             "File saved to device successfully.", Duration.SHORT);
                     Log.d(TAG, "createFile: file created: "+created+", Path: "+textFile.getAbsolutePath());
                 }else{
-                    new PortableContent().showSnackBar(context, Type.WARNING,
+                    new PortableContent(context).showSnackBar(Type.WARNING,
                             "File is already saved, overwriting content.", Duration.SHORT);
                 }
                 if (textFile.isFile()) {  //if that's a file then write into it

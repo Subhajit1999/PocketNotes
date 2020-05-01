@@ -20,12 +20,12 @@ import java.util.ArrayList;
 public class BottomSheetRecyclerAdapter extends RecyclerView.Adapter<BottomSheetRecyclerAdapter.RecyclerViewHolder>{
     private static final String TAG = "BottomSheetRecyclerAdap";
 
-    private ArrayList<ListObject> itemsList;
+    private ArrayList<DataModel> itemsList;
     private Context context;
     private BottomSheetRecyclerAdapter.OnBottomSheetItemClickListener mListener;
     private BottomSheetDialog dialog;
 
-    public BottomSheetRecyclerAdapter(Context context, ArrayList<ListObject> itemsList, BottomSheetDialog dialog){
+    public BottomSheetRecyclerAdapter(Context context, ArrayList<DataModel> itemsList, BottomSheetDialog dialog){
         this.context = context;
         this.itemsList = itemsList;
         this.dialog = dialog;

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
   <!-- Base application/light theme. -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -21,6 +21,7 @@
     <item name="colorNavigationItem">@color/menu_item_color_state</item>
     <item name="colorNavigationItemSelected">#ffffff</item>
     <item name="drawableNavigationItemBackground">@drawable/menu_background_color_state</item>
+    <item name="drawableFullScreenDialogNavigation">@drawable/ic_close</item>
   </style>
 
   <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
@@ -65,6 +66,7 @@
     <item name="colorNavigationItem">@color/menu_item_color_state</item>
     <item name="colorNavigationItemSelected">#000000</item>
     <item name="drawableNavigationItemBackground">@drawable/menu_background_color_state</item>
+    <item name="drawableFullScreenDialogNavigation">@drawable/ic_close_dark</item>
   </style>
 
   <style name="AppBottomSheetDialogTheme"
@@ -88,5 +90,29 @@
   </style>
   <style name="TransparentView">
     <item name="android:background">@android:color/transparent</item>
+  </style>
+
+  <!-- full screen dialog styles-->
+  <style name="FullDialog.Light" parent="AppTheme">
+    <item name="colorPrimaryDark">@color/white</item>
+    <item name="android:colorBackground">@color/colorPrimaryDark</item>
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:windowBackground">@android:color/white</item>
+    <item name="actionMenuTextColor">@color/colorAccent</item>
+      <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+  </style>
+
+  <style name="FullDialog.dark" parent="DarkTheme">
+    <item name="colorPrimaryDark">#212121</item>
+    <item name="android:colorBackground">#212121</item>
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:windowBackground">@android:color/black</item>
+    <item name="actionMenuTextColor">@color/colorAccent</item>
+      <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+  </style>
+
+  <style name="AppTheme.Slide">
+    <item name="android:windowEnterAnimation">@anim/slide_up</item>
+    <item name="android:windowExitAnimation">@anim/slide_down</item>
   </style>
 </resources>

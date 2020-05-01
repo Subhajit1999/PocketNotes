@@ -3,9 +3,15 @@ package com.subhajitkar.commercial.projet_tulip.utils;
 import android.Manifest;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.subhajitkar.commercial.projet_tulip.R;
 
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class StaticFields {
   private static final String TAG = "StaticFields";
@@ -37,13 +43,61 @@ public class StaticFields {
           android.R.color.holo_orange_light,android.R.color.holo_purple,android.R.color.holo_red_light
           , R.color.darkestGray};
 
-  public static ArrayList<ListObject> listNewNote;
+  public static ArrayList<DataModel> listNewNote;
   public static void newNoteListInit() {
     Log.d(TAG, "newNoteListInit: initializing new note options list");
     listNewNote = new ArrayList<>();
-    listNewNote.add(new ListObject("Simple note", R.drawable.ic_file, R.drawable.ic_file_dark));
-    listNewNote.add(new ListObject("Image note", R.drawable.ic_fab_image, R.drawable.ic_fab_image_dark));
-    listNewNote.add(new ListObject("Voice note", R.drawable.ic_fab_voice, R.drawable.ic_fab_voice_dark));
-    listNewNote.add(new ListObject("Todo list", R.drawable.ic_fab_todo, R.drawable.ic_fab_todo_dark));
+    listNewNote.add(new DataModel("Simple note", R.drawable.ic_file, R.drawable.ic_file_dark));
+    listNewNote.add(new DataModel("Image note", R.drawable.ic_fab_image, R.drawable.ic_fab_image_dark));
+    listNewNote.add(new DataModel("Voice note", R.drawable.ic_fab_voice, R.drawable.ic_fab_voice_dark));
+    listNewNote.add(new DataModel("Todo list", R.drawable.ic_fab_todo, R.drawable.ic_fab_todo_dark));
+  }
+
+  public static String stringListToJson(ArrayList<String> list) {
+    Log.d(TAG, "listToJson: gets called");
+    Gson gson = new Gson();
+      return gson.toJson(list);
+  }
+
+  public static String objListToJson(ArrayList<DataModel> list) {
+    Log.d(TAG, "listToJson: gets called");
+    Gson gson = new Gson();
+    return gson.toJson(list);
+  }
+
+  public static ArrayList<DataModel> jsonToObjList(String jsonString) {
+    Log.d(TAG, "jsonToList: gets called");
+    ArrayList<DataModel> list;
+    Gson gson = new Gson();
+    if (!jsonString.isEmpty()){
+      Type type = new TypeToken<ArrayList<DataModel>>() {
+      }.getType();
+
+      list = gson.fromJson(jsonString, type);
+    }else{
+      list = new ArrayList<>();
+    }
+    return list;
+  }
+
+  public static ArrayList<String> jsonToStringList(String jsonString) {
+    Log.d(TAG, "jsonToList: gets called");
+    ArrayList<String> list;
+    Gson gson = new Gson();
+    if (!jsonString.isEmpty()){
+      Type type = new TypeToken<ArrayList<String>>() {
+      }.getType();
+
+      list = gson.fromJson(jsonString, type);
+    }else{
+      list = new ArrayList<>();
+    }
+    return list;
+  }
+
+  public static String getDateTime(String format){
+    Log.d(TAG, "getDateTime: getting current date, time in specified format");
+    SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+    return sdf.format(new Date());
   }
 }

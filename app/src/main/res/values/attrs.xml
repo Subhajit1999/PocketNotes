@@ -9,5 +9,6 @@
         <attr name="colorNavigationItem" format="color" />
         <attr name="colorNavigationItemSelected" format="color" />
         <attr name="drawableNavigationItemBackground" format="reference" />
+        <attr name="drawableFullScreenDialogNavigation" format="reference" />
     </declare-styleable>
 </resources>

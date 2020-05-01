@@ -3,9 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
-      android:id="@+id/editor_share"
+      android:id="@+id/editor_undo"
       android:orderInCategory="1"
+      android:title="Undo"
+      app:showAsAction="always"
+      android:icon="@drawable/ic_undo"/>
+  <item
+      android:id="@+id/editor_redo"
+      android:orderInCategory="2"
+      android:title="Redo"
+      app:showAsAction="always"
+      android:icon="@drawable/ic_redo"/>
+  <item
+      android:id="@+id/editor_share"
+      android:orderInCategory="3"
       android:title="Share note"
-      app:showAsAction="ifRoom"
+      app:showAsAction="never"
       android:icon="@drawable/ic_share_dark"/>
 </menu>

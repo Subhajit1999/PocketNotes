@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 
@@ -20,19 +21,23 @@ import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.fragments.SimpleNoteFragment;
 import com.subhajitkar.commercial.projet_tulip.utils.PortableContent;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
+import com.valdesekamdem.library.mdtoast.MDToast;
+import com.werdpressed.partisan.rundo.RunDo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class NoteEditorActivity extends AppCompatActivity {
+public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextLink {
     private static final String TAG = "NoteEditorActivity";
 
-    private LinearLayout root;
     private Cursor c;
     private String intentFlag, UniqueId, createdDateAndTime, table;
     private int position, idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex, editorTypeIndex, starIndex, tagIndex;
     private String sendNoteTitle, sendNoteContent, sendCreatedDateTime, editorType, star, tag;
+    private SimpleNoteFragment fragment;
+    private RunDo mRunDo;
+    private PortableContent portableContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +53,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         //customizing the actionbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //initializing views
-        root = findViewById(R.id.note_editor_linear);
-
+        portableContent = new PortableContent(this);
         table = getIntent().getStringExtra(StaticFields.KEY_INTENT_TABLEID);
         try {
             //initializing database primitives
@@ -64,7 +67,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             starIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_STAR);
             tagIndex = c.getColumnIndex(StaticFields.dbHelper.ITEM_TAG);
         }catch(Exception e){
-            new PortableContent().showSnackBar(this, Type.ERROR, "Some error occurred. ("+e.getMessage()+")",
+            portableContent.showSnackBar(Type.ERROR, "Some error occurred. ("+e.getMessage()+")",
                     Duration.SHORT);
         }
 
@@ -81,7 +84,9 @@ public class NoteEditorActivity extends AppCompatActivity {
             sendNoteTitle = c.getString(titleIndex);
             sendNoteContent = c.getString(contentIndex);
             editorType = c.getString(editorTypeIndex);
-            star = c.getString(starIndex);
+            if (!table.equals(StaticFields.dbHelper.TABLE_STAR)) {
+                star = c.getString(starIndex);
+            }
             tag = c.getString(tagIndex);
             createdDateAndTime = sendCreatedDateTime = c.getString(createdDateIndex);
         }else{      //if new
@@ -91,12 +96,15 @@ public class NoteEditorActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Edit new note");
         }
         launchFragment();
+        //undo, redo library init
+        mRunDo = RunDo.Factory.getInstance(getFragmentManager());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: creating menu");
         getMenuInflater().inflate(R.menu.menu_editor,menu);
+
         return true;
     }
 
@@ -106,6 +114,14 @@ public class NoteEditorActivity extends AppCompatActivity {
             case android.R.id.home:
             Log.d(TAG, "onOptionsItemSelected: back button clicked");
             onBackPressed();
+                break;
+            case R.id. editor_undo:
+                Log.d(TAG, "onOptionsItemSelected: undo pressed");
+                    mRunDo.undo();
+                break;
+            case R.id.editor_redo:
+                Log.d(TAG, "onOptionsItemSelected: redo pressed");
+                    mRunDo.redo();
                 break;
             case R.id.editor_share:
                 Log.d(TAG, "onOptionsItemSelected: editor share option");
@@ -121,7 +137,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                     sendIntent.setType("text/plain");
                     startActivity(Intent.createChooser(sendIntent, "Share note with..."));
                 }else{
-                    new PortableContent().showSnackBar(this, Type.ERROR, "Some error occurred",
+                    portableContent.showSnackBar(Type.ERROR, "Some error occurred",
                             Duration.SHORT);
                 }
                 break;
@@ -149,8 +165,8 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         boolean AlreadyThere = false;
         //getting the created date and time
-        String currentDateAndTime = getDateTime(StaticFields.visibleDateFormat);
-        String noteUniqueId = getDateTime(StaticFields.UniqueIdDateFormat);
+        String currentDateAndTime = StaticFields.getDateTime(StaticFields.visibleDateFormat);
+        String noteUniqueId = StaticFields.getDateTime(StaticFields.UniqueIdDateFormat);
 
         try {
             //checking if note already exists in the database or not
@@ -160,7 +176,14 @@ public class NoteEditorActivity extends AppCompatActivity {
                     ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(table, UniqueId,
                             StaticFields.noteTitle, StaticFields.noteContent, createdDateAndTime, currentDateAndTime, editorType
                     ,star, tag);
-                    StaticFields.dbHelper.updateNote(table, UniqueId, contentValues);
+                    StaticFields.dbHelper.updateNote(table,UniqueId, contentValues);
+                    if(Boolean.parseBoolean(star)){
+                        //update in star table also
+                        ContentValues starValues = StaticFields.dbHelper.createDBContentValue(StaticFields.dbHelper.TABLE_STAR,
+                                UniqueId, StaticFields.noteTitle, StaticFields.noteContent, createdDateAndTime, currentDateAndTime,
+                                editorType, table, tag);
+                        StaticFields.dbHelper.updateNote(StaticFields.dbHelper.TABLE_STAR, UniqueId, starValues);
+                    }
                 }
                 c = StaticFields.dbHelper.getData(table);
                 Log.d(TAG, "onPause: note updated successfully");
@@ -187,17 +210,11 @@ public class NoteEditorActivity extends AppCompatActivity {
             Log.d(TAG, "onPause: content:"+StaticFields.noteContent);
             c.close();
         }catch(Exception e){
-            new PortableContent().showSnackBar(this, Type.ERROR, "Some error occured. ("+e.getMessage()+")",
+            portableContent.showSnackBar(Type.ERROR, "Some error occured. ("+e.getMessage()+")",
                     Duration.SHORT);
             Log.d(TAG, "onPause: error occurred. Message: "+e.getMessage());
         }
         super.onPause();
-    }
-
-    public String getDateTime(String format){
-        Log.d(TAG, "getDateTime: getting current date, time in specified format");
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
-        return sdf.format(new Date());
     }
 
     public void launchFragment(){
@@ -205,7 +222,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         if (editorType.equals("simple")){
             //launch simpleNoteFragment
-            SimpleNoteFragment fragment = new SimpleNoteFragment();
+            fragment = new SimpleNoteFragment();
             bundle.putString(StaticFields.KEY_EDITOR_TITLE, sendNoteTitle);
             bundle.putString(StaticFields.KEY_EDITOR_CONTENT, sendNoteContent);
             bundle.putString(StaticFields.KEY_EDITOR_DATECREATED, sendCreatedDateTime);
@@ -215,5 +232,10 @@ public class NoteEditorActivity extends AppCompatActivity {
                     .addToBackStack(null)
                     .commit();
         }
+    }
+
+    @Override
+    public EditText getEditTextForRunDo() {
+        return fragment.getEditText();
     }
 }

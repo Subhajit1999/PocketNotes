@@ -33,4 +33,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.chootdev:csnackbar:1.4.2'
     implementation 'androidx.preference:preference:1.1.1'
+    implementation 'com.werdpressed.partisan:rundo:1.0.5'
+    implementation 'com.valdesekamdem.library:md-toast:0.9.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

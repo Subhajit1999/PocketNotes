@@ -20,7 +20,7 @@
             android:icon="@drawable/ic_menu_trash" />
     </group>
     <item
-        android:title="Options">
+        android:title="Others">
         <menu>
             <item
                 android:title="Settings"

@@ -72,7 +72,7 @@ public class EmptyNotesFragment extends Fragment {
             //creating new note menu
             StaticFields.newNoteListInit();
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.AppDialogTheme);
-            builder.setAdapter(new DialogListAdapter(getContext(), StaticFields.listNewNote), new DialogInterface.OnClickListener() {
+            builder.setAdapter(new DialogListAdapter(getContext(), StaticFields.listNewNote, 0), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //add item click action here

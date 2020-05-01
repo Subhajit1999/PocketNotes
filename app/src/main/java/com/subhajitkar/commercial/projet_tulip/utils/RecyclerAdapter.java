@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -65,6 +67,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         holder.note_body.setText(mNotesList.get(position).getmNoteContent());
         holder.note_date.setText(mNotesList.get(position).getmDateCreated());
         holder.cardBorderView.setBackgroundColor(mContext.getResources().getColor(StaticFields.colorLists[randInt]));
+        if (mNotesList.get(position).getIsStarred()){
+            holder.starLayout.setVisibility(View.VISIBLE);
+            holder.iv_star.setVisibility(View.VISIBLE);
+            if (StaticFields.darkThemeSet){
+                holder.iv_star.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_star_filled_dark));
+            }else{
+                holder.iv_star.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_star_filled));
+            }
+        }else{
+            holder.starLayout.setVisibility(View.INVISIBLE);
+            holder.iv_star.setVisibility(View.INVISIBLE);
+        }
         prevcolor=randInt;
     }
 
@@ -77,6 +91,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
         TextView note_title, note_body, note_date;
         View cardBorderView;
+        ImageView iv_star;
+        LinearLayout starLayout;
 
         private RecyclerViewHolder(View itemView) {
             super(itemView);
@@ -85,6 +101,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
             note_body = itemView.findViewById(R.id.tv_note_body);
             note_date = itemView.findViewById(R.id.tv_note_date);
             cardBorderView = itemView.findViewById(R.id.view);
+            iv_star = itemView.findViewById(R.id.iv_note_star);
+            starLayout = itemView.findViewById(R.id.layout_note_star);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -79,9 +79,9 @@ public class NotesDBHelper extends SQLiteOpenHelper {
         db.insert(table, null, contentValues);
     }
 
-    public void updateNote (String table, String id, ContentValues contentValues) {
+    public void updateNote (String table, String searchKey, ContentValues contentValues) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.update(table, contentValues, "id = ? ", new String[] { id } );
+        db.update(table, contentValues, "id = ?", new String[] { searchKey } );
     }
 
     public Integer deleteNote (String table, String id) {

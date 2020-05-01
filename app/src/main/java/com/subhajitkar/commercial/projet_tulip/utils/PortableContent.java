@@ -19,14 +19,20 @@ import com.chootdev.csnackbar.Duration;
 import com.chootdev.csnackbar.Snackbar;
 import com.chootdev.csnackbar.Type;
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class PortableContent {
     private static final String TAG = "PortableContent";
+    private Context context;
 
-    public void showSnackBar(Context context, Type type, String msg, Duration duration){
+    public PortableContent(Context context){
+        this.context = context;
+    }
+
+    public void showSnackBar(Type type, String msg, Duration duration){
         Log.d(TAG, "showSnackBar: showing snackbar");
         Snackbar.with(context,null)
                 .type(type)
@@ -35,5 +41,10 @@ public class PortableContent {
                 .fillParent(true)
                 .textAlign(Align.LEFT)
                 .show();
+    }
+
+    public MDToast showToast(String msg, int duration, int type){
+        Log.d(TAG, "showToast: Showing toast message.");
+        return MDToast.makeText(context,msg,duration,type);
     }
 }

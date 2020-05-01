@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,13 +15,16 @@ import java.util.ArrayList;
 
 public class DialogListAdapter extends BaseAdapter {
 
-    private ArrayList<ListObject> list;
+    private ArrayList<DataModel> list;
     private Context context;
+    private int identifier;
 
-    public DialogListAdapter(Context context, ArrayList<ListObject> list) {
+    public DialogListAdapter(Context context, ArrayList<DataModel> list, int id) {
         this.context = context;
         this.list = list;
+        identifier = id;
     }
+
     @Override
     public int getCount() {
         return list.size();
@@ -34,25 +38,28 @@ public class DialogListAdapter extends BaseAdapter {
         return position;
     }
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         ViewHolder viewHolder;
-        if (convertView == null) {
-            viewHolder = new ViewHolder();
-            LayoutInflater inflater = LayoutInflater.from(context);
-            convertView = inflater.inflate(R.layout.layout_dialog_list_item, parent, false);
-            //widgets initialization
-            viewHolder.text = convertView.findViewById(R.id.tv_dialog);
-            viewHolder.icon = convertView.findViewById(R.id.iv_dialog);
+        if (identifier==0) {  //for fab and share type dialog
+            if (convertView == null) {
+                viewHolder = new ViewHolder();
+                LayoutInflater inflater = LayoutInflater.from(context);
+                convertView = inflater.inflate(R.layout.layout_dialog_list_item, parent, false);
+                //widgets initialization
+                viewHolder.text = convertView.findViewById(R.id.tv_dialog);
+                viewHolder.icon = convertView.findViewById(R.id.iv_dialog);
 
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+            //adding data
+            viewHolder.text.setText(list.get(position).getText());
+            viewHolder.icon.setImageResource(list.get(position).getIcon());
+            viewHolder.icon.setTag(position);
+
         }
-        //adding data
-        viewHolder.text.setText(list.get(position).getText());
-        viewHolder.icon.setImageResource(list.get(position).getIcon());
-        viewHolder.icon.setTag(position);
         return convertView;
     }
 
