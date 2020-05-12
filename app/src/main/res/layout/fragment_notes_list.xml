@@ -34,7 +34,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:src="@drawable/ic_list_sort" />
+                    android:src="?attr/drawableSort" />
                 <TextView
                     android:id="@+id/tv_sort"
                     android:layout_width="wrap_content"

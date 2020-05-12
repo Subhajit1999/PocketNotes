@@ -43,6 +43,7 @@ public class GeneralActivity extends AppCompatActivity {
       getSupportActionBar().setTitle(title);
       WebFragment fragment = new WebFragment();
       Bundle bundle = new Bundle();
+      bundle.putString(StaticFields.KEY_INTENT_WEBTITLE,title);
       bundle.putString(StaticFields.KEY_INTENT_WEBVIEW,webUrl);
       fragment.setArguments(bundle);
       getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
@@ -84,7 +85,7 @@ public class GeneralActivity extends AppCompatActivity {
   @Override
   public void onBackPressed() {
     super.onBackPressed();
-    if (identifier.equals("webView")) {  //when settings to webView
+    if (identifier.equals("webView") && !title.equals("Help") && !title.equals("About")) {  //when settings to webView
       finish();
       Intent i = new Intent(this, GeneralActivity.class);
       i.putExtra(StaticFields.KEY_BUNDLE_GENERAL, "settings");

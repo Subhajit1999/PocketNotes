@@ -16,16 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.subhajitkar.commercial.projet_tulip.R;
 import com.subhajitkar.commercial.projet_tulip.activities.NoteEditorActivity;
-import com.subhajitkar.commercial.projet_tulip.utils.DialogListAdapter;
+import com.subhajitkar.commercial.projet_tulip.adapters.DialogListAdapter;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 public class EmptyNotesFragment extends Fragment {

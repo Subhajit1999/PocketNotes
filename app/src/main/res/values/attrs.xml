@@ -10,5 +10,7 @@
         <attr name="colorNavigationItemSelected" format="color" />
         <attr name="drawableNavigationItemBackground" format="reference" />
         <attr name="drawableFullScreenDialogNavigation" format="reference" />
+        <attr name="drawableSort" format="reference" />
+        <attr name="colorToDoNoteBackground" format="color" />
     </declare-styleable>
 </resources>

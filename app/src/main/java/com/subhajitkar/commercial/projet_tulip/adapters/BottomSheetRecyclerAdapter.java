@@ -1,4 +1,4 @@
-package com.subhajitkar.commercial.projet_tulip.utils;
+package com.subhajitkar.commercial.projet_tulip.adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.objects.DataModel;
 
 import java.util.ArrayList;
 

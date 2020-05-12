@@ -1,6 +1,7 @@
 package com.subhajitkar.commercial.projet_tulip.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -88,5 +89,44 @@ public class OnStorage {
             }
         }
         return textFile;
+    }
+
+    public static File createImageFile(String title, Bitmap bitmapImage, Context context){
+        Log.d(TAG, "createImageFile: creating canvas image file");
+        //trim title for file name
+        String[] str = title.split("@");
+        String filename = str[1];
+        File imageFile=null;
+
+        if (new OnStorage().isExternalStorageWritable()){  //checking if external storage writable
+            File root = Environment.getExternalStorageDirectory();  //root directory
+            File dir = new File(root.getAbsolutePath()+"/PocketNotes");  //creating new dir
+            if (!dir.exists()){
+                boolean success = dir.mkdir();
+            }
+            imageFile = new File(dir, filename + ".png");    //creating blank file
+            try {
+                if (!imageFile.exists()){
+                    boolean created = imageFile.createNewFile();
+                    new PortableContent(context).showSnackBar(Type.SUCCESS,
+                            "Image saved to device successfully.", Duration.SHORT);
+                    Log.d(TAG, "createFile: file created: "+created+", Path: "+imageFile.getAbsolutePath());
+                }else{
+                    new PortableContent(context).showSnackBar(Type.WARNING,
+                            "Image is already saved, overwriting changes.", Duration.SHORT);
+                }
+                if (imageFile.isFile()) {  //if that's a file then write into it
+                    FileOutputStream fos = new FileOutputStream(imageFile);
+                    bitmapImage.compress(Bitmap.CompressFormat.PNG,100,fos);
+                    fos.flush();
+                    fos.close();
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return imageFile;
     }
 }

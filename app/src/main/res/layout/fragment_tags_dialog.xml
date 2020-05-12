@@ -2,12 +2,14 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/cardBackColor">
     <!--toolbar-->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/cardBackColor"
+        android:id="@+id/appBar"
         app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
@@ -26,7 +28,112 @@
         android:layout_height="match_parent"
         android:background="?attr/cardBackColor"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stroke width:"
+                    android:textColor="?attr/titleColor"
+                    android:fontFamily="@font/poppins_medium"
+                    android:layout_marginBottom="10dp"/>
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stroke_width_seekbar"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stroke style:"
+                    android:textColor="?attr/titleColor"
+                    android:fontFamily="@font/poppins_medium"
+                    android:layout_marginBottom="8dp"/>
+                <com.jaredrummler.materialspinner.MaterialSpinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_medium"
+                    app:ms_background_color="@color/colorAccentLight"
+                    android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stroke color:"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="?attr/titleColor"
+                    android:layout_marginBottom="8dp"/>
+                <com.skydoves.colorpickerview.ColorPickerView
+                    android:id="@+id/colorPickerView"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    app:palette="@drawable/palette"
+                    android:layout_gravity="center_horizontal"
+                    app:selector="@drawable/wheel"
+                    app:preferenceName="MyColorPicker"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tv_color_hex"
+                    android:text="#ababab"
+                    android:textSize="16sp"
+                    android:textColor="?attr/titleColor"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp" />
+                <com.skydoves.colorpickerview.AlphaTileView
+                    android:id="@+id/alphaTileView"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/bt_color_default"
+                        android:layout_gravity="end"
+                        android:text="Default color"
+                        android:background="@drawable/button_click"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white"
+                        android:layout_marginEnd="5dp"/>
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/bt_reset_all"
+                        android:layout_gravity="end"
+                        android:text="Reset all"
+                        android:background="@drawable/button_click"
+                        android:paddingStart="5dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:paddingEnd="5dp"
+                        android:layout_marginStart="5dp"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
     </FrameLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

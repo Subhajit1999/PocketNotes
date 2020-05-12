@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="?attr/colorToDoNoteBackground"
+android:orientation="vertical"
+android:padding="5dp">
+
+<EditText
+    android:id="@+id/et_note_title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:hint="@string/hint_note_title"
+    android:padding="5dp"
+    android:textColor="?attr/titleColor"
+    android:fontFamily="@font/poppins_semibold"
+    android:textColorHint="?attr/contentColor"
+    android:textSize="@dimen/noteTitleText"
+    android:textStyle="bold" />
+<com.yalantis.beamazingtoday.ui.widget.BatRecyclerView
+    android:id="@+id/bat_recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
+    app:add_button_color="@drawable/selector_button_add"
+    app:hint="Add new Item"
+    app:radio_button_res="@drawable/selector_radio_button" />
+
+</LinearLayout>

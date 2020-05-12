@@ -1,4 +1,6 @@
-package com.subhajitkar.commercial.projet_tulip.utils;
+package com.subhajitkar.commercial.projet_tulip.objects;
+
+import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 public class DataModel {
     private static final String TAG = "ListObject";

@@ -1,15 +1,15 @@
-package com.subhajitkar.commercial.projet_tulip.utils;
+package com.subhajitkar.commercial.projet_tulip.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.objects.DataModel;
 
 import java.util.ArrayList;
 

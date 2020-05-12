@@ -1,11 +1,12 @@
 package com.subhajitkar.commercial.projet_tulip.utils;
 
 import android.Manifest;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.objects.DataModel;
+import com.subhajitkar.commercial.projet_tulip.objects.ObjectNote;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -19,7 +20,7 @@ public class StaticFields {
   public static final String KEY_INTENT_WEBVIEW = "KEY_INTENT_WEBVIEW#937195";
   public static NotesDBHelper dbHelper;
   public static final String KEY_INTENT_EDITORACTIVITY = "KEY_INTENT_EDITORACTIVITY#264289";
-  public static final String KEY_INTENT_LISTPOSITION = "KEY_INTENT_LISTPOSITION#327964";
+  public static final String KEY_INTENT_LISTOBJECT = "KEY_INTENT_LISTOBJECT#327964";
   public static final String KEY_INTENT_TABLEID = "KEY_INTENT_TABLEID#985378";
   public static final String visibleDateFormat = "MMM dd,yyyy | H:mm a";
   public static final String UniqueIdDateFormat = "MMMddyyyy_HH:mm:ss";
@@ -32,13 +33,19 @@ public class StaticFields {
   public static final String KEY_EDITOR_CONTENT = "KEY_EDITOR_CONTENT#521097";
   public static final String KEY_EDITOR_DATECREATED = "KEY_EDITOR_DATECREATED#462197";
   public static final String KEY_EDITOR_INTENTFLAG = "KEY_EDITOR_INTENTFLAG#379468";
-  public static final String KEY_RICH_NOTE_EXT = "KEY_RICH_NOTE_EXT#397194";
+  public static final String KEY_CLICKED_NOTE_OBJ = "KEY_CLICKED_NOTE_OBJ#397194";
   public static boolean darkThemeSet = false;
+  public static int canvasStrokeWidth, canvasStrokeColor, canvasStrokeStyle;
+  public static String colorHex;
+  public static Point colorPickerPosition;
+  public static String canvasTitleTemplate = "Title_canvas_drawing_note@";
   public static String[] permissions = new String[] {
           Manifest.permission.WRITE_EXTERNAL_STORAGE
   };
   public static final int PERMISSION_CODE = 10;
-  public static String noteTitle, noteContent, noteExtension;
+  public static String noteTitle, noteContent, shareNoteTitle, shareNoteContent;
+  public static ObjectNote itemClickNoteObject;  //temp for now, should remove in future
+  public static Bitmap shareCanvasBitmap;
   public static int[] colorLists = new int[]{android.R.color.holo_blue_bright,android.R.color.holo_green_light,android.R.color.holo_blue_light,
           android.R.color.holo_orange_light,android.R.color.holo_purple,android.R.color.holo_red_light
           , R.color.darkestGray};
@@ -48,51 +55,8 @@ public class StaticFields {
     Log.d(TAG, "newNoteListInit: initializing new note options list");
     listNewNote = new ArrayList<>();
     listNewNote.add(new DataModel("Simple note", R.drawable.ic_file, R.drawable.ic_file_dark));
-    listNewNote.add(new DataModel("Image note", R.drawable.ic_fab_image, R.drawable.ic_fab_image_dark));
-    listNewNote.add(new DataModel("Voice note", R.drawable.ic_fab_voice, R.drawable.ic_fab_voice_dark));
+    listNewNote.add(new DataModel("Drawing note", R.drawable.ic_fab_drawing, R.drawable.ic_fab_drawing_dark));
     listNewNote.add(new DataModel("Todo list", R.drawable.ic_fab_todo, R.drawable.ic_fab_todo_dark));
-  }
-
-  public static String stringListToJson(ArrayList<String> list) {
-    Log.d(TAG, "listToJson: gets called");
-    Gson gson = new Gson();
-      return gson.toJson(list);
-  }
-
-  public static String objListToJson(ArrayList<DataModel> list) {
-    Log.d(TAG, "listToJson: gets called");
-    Gson gson = new Gson();
-    return gson.toJson(list);
-  }
-
-  public static ArrayList<DataModel> jsonToObjList(String jsonString) {
-    Log.d(TAG, "jsonToList: gets called");
-    ArrayList<DataModel> list;
-    Gson gson = new Gson();
-    if (!jsonString.isEmpty()){
-      Type type = new TypeToken<ArrayList<DataModel>>() {
-      }.getType();
-
-      list = gson.fromJson(jsonString, type);
-    }else{
-      list = new ArrayList<>();
-    }
-    return list;
-  }
-
-  public static ArrayList<String> jsonToStringList(String jsonString) {
-    Log.d(TAG, "jsonToList: gets called");
-    ArrayList<String> list;
-    Gson gson = new Gson();
-    if (!jsonString.isEmpty()){
-      Type type = new TypeToken<ArrayList<String>>() {
-      }.getType();
-
-      list = gson.fromJson(jsonString, type);
-    }else{
-      list = new ArrayList<>();
-    }
-    return list;
   }
 
   public static String getDateTime(String format){

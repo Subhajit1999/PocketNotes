@@ -12,14 +12,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.chootdev.csnackbar.Duration;
+import com.chootdev.csnackbar.Type;
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.utils.NetworkManager;
+import com.subhajitkar.commercial.projet_tulip.utils.PortableContent;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
 
 public class WebFragment extends Fragment {
 	private static final String TAG = "WebFragment";
 
 	private WebView webView;
-	private String webUrl;
+	private String webUrl, nav;
 
 	@Nullable
 	@Override
@@ -33,6 +37,7 @@ public class WebFragment extends Fragment {
 
 		if (getArguments()!=null){
 			webUrl = getArguments().getString(StaticFields.KEY_INTENT_WEBVIEW);
+			nav = getArguments().getString(StaticFields.KEY_INTENT_WEBTITLE);
 		}
 	}
 
@@ -42,10 +47,23 @@ public class WebFragment extends Fragment {
 		Log.d(TAG, "onViewCreated: view created");
 
 		webView = view.findViewById(R.id.webView);
-		webView.getSettings().setBuiltInZoomControls(true);   //setting up webView properties
-		webView.getSettings().setDisplayZoomControls(false);
-		webView.getSettings().setJavaScriptEnabled(true);  //in case of any error
-		webView.setWebViewClient(new WebViewClient());
-		webView.loadUrl(webUrl);
+		if (!nav.equals("Help") && !nav.equals("About")) {
+			webView.getSettings().setBuiltInZoomControls(true);   //setting up webView properties
+			webView.getSettings().setDisplayZoomControls(false);
+			webView.getSettings().setJavaScriptEnabled(true);  //in case of any error
+			webView.setWebViewClient(new WebViewClient());
+			webView.loadUrl(webUrl);
+		}else{
+			if (new NetworkManager(getContext()).isNetworkConnected()){
+				webView.getSettings().setBuiltInZoomControls(true);   //setting up webView properties
+				webView.getSettings().setDisplayZoomControls(false);
+				webView.getSettings().setJavaScriptEnabled(true);  //in case of any error
+				webView.setWebViewClient(new WebViewClient());
+				webView.loadUrl(webUrl);
+			}else{
+				new PortableContent(getContext()).showSnackBar(Type.ERROR,"This action requires internet. try again.", Duration.SHORT);
+
+			}
+		}
 	}
 }

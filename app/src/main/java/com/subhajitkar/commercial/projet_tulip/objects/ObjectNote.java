@@ -1,12 +1,18 @@
-package com.subhajitkar.commercial.projet_tulip.utils;
+package com.subhajitkar.commercial.projet_tulip.objects;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
+@Parcel
 public class ObjectNote {
 
-    private String mNoteId, mNoteTitle, mNoteContent, mDateCreated, mdatedUpdated, mEditorType, mTag, mTableId;
-    private boolean isStarred;
+    public String mNoteId, mNoteTitle, mNoteContent, mDateCreated, mdatedUpdated, mEditorType, mTag, mTableId;
+    public boolean isStarred;
+
+    @ParcelConstructor ObjectNote(){}
 
     public ObjectNote(String noteId, String noteTitle, String noteContent, String dateCreated, String dateUpdated,
-                      String editorType, boolean star, String tag){
+               String editorType, boolean star, String tag){
         mNoteId = noteId;
         mNoteTitle = noteTitle;
         mNoteContent = noteContent;

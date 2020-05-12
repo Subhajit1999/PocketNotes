@@ -22,6 +22,8 @@
     <item name="colorNavigationItemSelected">#ffffff</item>
     <item name="drawableNavigationItemBackground">@drawable/menu_background_color_state</item>
     <item name="drawableFullScreenDialogNavigation">@drawable/ic_close</item>
+    <item name="colorToDoNoteBackground">@android:color/darker_gray</item>
+    <item name="drawableSort">@drawable/ic_list_sort</item>
   </style>
 
   <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
@@ -38,7 +40,7 @@
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
   </style>
-<!-- navigation view custom style-->
+  <!-- navigation view custom style-->
   <style name="NavigationView" parent="Widget.Design.NavigationView">
     <item name="itemIconTint">?attr/colorNavigationItem</item>
     <item name="itemTextColor">?attr/colorNavigationItem</item>
@@ -67,6 +69,8 @@
     <item name="colorNavigationItemSelected">#000000</item>
     <item name="drawableNavigationItemBackground">@drawable/menu_background_color_state</item>
     <item name="drawableFullScreenDialogNavigation">@drawable/ic_close_dark</item>
+    <item name="colorToDoNoteBackground">@color/darkestGray</item>
+    <item name="drawableSort">@drawable/ic_list_sort_dark</item>
   </style>
 
   <style name="AppBottomSheetDialogTheme"
@@ -99,7 +103,7 @@
     <item name="android:windowIsFloating">false</item>
     <item name="android:windowBackground">@android:color/white</item>
     <item name="actionMenuTextColor">@color/colorAccent</item>
-      <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+    <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
   </style>
 
   <style name="FullDialog.dark" parent="DarkTheme">
@@ -108,7 +112,7 @@
     <item name="android:windowIsFloating">false</item>
     <item name="android:windowBackground">@android:color/black</item>
     <item name="actionMenuTextColor">@color/colorAccent</item>
-      <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
   </style>
 
   <style name="AppTheme.Slide">

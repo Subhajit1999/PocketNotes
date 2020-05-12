@@ -2,41 +2,47 @@ package com.subhajitkar.commercial.projet_tulip.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ShareCompat;
+import androidx.core.content.FileProvider;
 
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 
 import com.chootdev.csnackbar.Duration;
 import com.chootdev.csnackbar.Type;
-import com.google.android.material.snackbar.Snackbar;
 import com.subhajitkar.commercial.projet_tulip.R;
+import com.subhajitkar.commercial.projet_tulip.fragments.CanvasFragment;
 import com.subhajitkar.commercial.projet_tulip.fragments.SimpleNoteFragment;
+import com.subhajitkar.commercial.projet_tulip.fragments.ToDoNoteFragment;
+import com.subhajitkar.commercial.projet_tulip.objects.ObjectNote;
+import com.subhajitkar.commercial.projet_tulip.utils.OnStorage;
 import com.subhajitkar.commercial.projet_tulip.utils.PortableContent;
 import com.subhajitkar.commercial.projet_tulip.utils.StaticFields;
-import com.valdesekamdem.library.mdtoast.MDToast;
 import com.werdpressed.partisan.rundo.RunDo;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import org.parceler.Parcels;
+
+import java.io.File;
 
 public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextLink {
     private static final String TAG = "NoteEditorActivity";
 
     private Cursor c;
     private String intentFlag, UniqueId, createdDateAndTime, table;
-    private int position, idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex, editorTypeIndex, starIndex, tagIndex;
+    private int idIndex, titleIndex, contentIndex,createdDateIndex, updatedDateIndex, editorTypeIndex, starIndex, tagIndex;
     private String sendNoteTitle, sendNoteContent, sendCreatedDateTime, editorType, star, tag;
-    private SimpleNoteFragment fragment;
     private RunDo mRunDo;
+    private SimpleNoteFragment fragment;
+    private ObjectNote objectNote;
     private PortableContent portableContent;
 
     @Override
@@ -76,35 +82,39 @@ public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextL
         Log.d(TAG, "onCreate: intentFlag: "+intentFlag);
 
         if (intentFlag.equals("existing")){
-            position = getIntent().getIntExtra(StaticFields.KEY_INTENT_LISTPOSITION,0);
-            Log.d(TAG, "onCreate: position: "+position);
+            Bundle bundle = getIntent().getBundleExtra(StaticFields.KEY_INTENT_LISTOBJECT);
+            objectNote = Parcels.unwrap(getIntent().getParcelableExtra(StaticFields.KEY_CLICKED_NOTE_OBJ));
             getSupportActionBar().setTitle("Edit note");
-            c.moveToPosition(position);
-            UniqueId = c.getString(idIndex);
-            sendNoteTitle = c.getString(titleIndex);
-            sendNoteContent = c.getString(contentIndex);
-            editorType = c.getString(editorTypeIndex);
+            UniqueId = objectNote.getmNoteId();
+            sendNoteTitle = objectNote.getmNoteTitle();
+            sendNoteContent = objectNote.getmNoteContent();
+            editorType = objectNote.getmEditorType();
             if (!table.equals(StaticFields.dbHelper.TABLE_STAR)) {
-                star = c.getString(starIndex);
+                star = String.valueOf(objectNote.getIsStarred());
             }
-            tag = c.getString(tagIndex);
-            createdDateAndTime = sendCreatedDateTime = c.getString(createdDateIndex);
+            tag = objectNote.getmTag();
+            createdDateAndTime = sendCreatedDateTime = objectNote.getmDateCreated();
         }else{      //if new
             if (getIntent()!=null){
                 editorType = getIntent().getStringExtra(StaticFields.KEY_EDITOR_ID);
             }
-            getSupportActionBar().setTitle("Edit new note");
+            getSupportActionBar().setTitle("New note");
         }
         launchFragment();
-        //undo, redo library init
-        mRunDo = RunDo.Factory.getInstance(getFragmentManager());
+        if (editorType.equals("simple")) {
+            //undo, redo library init
+            mRunDo = RunDo.Factory.getInstance(getFragmentManager());
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu: creating menu");
         getMenuInflater().inflate(R.menu.menu_editor,menu);
-
+        if (!editorType.equals("simple")){
+            menu.findItem(R.id.editor_undo).setVisible(false);
+            menu.findItem(R.id.editor_redo).setVisible(false);
+        }
         return true;
     }
 
@@ -112,33 +122,61 @@ public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-            Log.d(TAG, "onOptionsItemSelected: back button clicked");
-            onBackPressed();
+                Log.d(TAG, "onOptionsItemSelected: back button clicked");
+                onBackPressed();
                 break;
             case R.id. editor_undo:
                 Log.d(TAG, "onOptionsItemSelected: undo pressed");
-                    mRunDo.undo();
+                mRunDo.undo();
                 break;
             case R.id.editor_redo:
                 Log.d(TAG, "onOptionsItemSelected: redo pressed");
-                    mRunDo.redo();
+                mRunDo.redo();
                 break;
             case R.id.editor_share:
                 Log.d(TAG, "onOptionsItemSelected: editor share option");
-                if (!c.isClosed()) {
-                    String noteTitle = c.getString(titleIndex);
-                    String noteContent = c.getString(contentIndex);
-
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, noteTitle + "\n\n" +
-                            noteContent + "\n\n================\nShared from Pocket Notes, a truly simple notepad app.\n\nDownload now:)\n"
-                            + StaticFields.Store_URL);
-                    sendIntent.setType("text/plain");
-                    startActivity(Intent.createChooser(sendIntent, "Share note with..."));
+                boolean flag = false;
+                if (!editorType.equals("drawing")) {
+                    if (editorType.equals("simple")) {
+                        SimpleNoteFragment fragment = (SimpleNoteFragment) getSupportFragmentManager().findFragmentByTag("TAG_SIMPLE_FRAGMENT");
+                        flag = fragment.onSharing();
+                    } else if (editorType.equals("todoList")) {
+                        ToDoNoteFragment fragment = (ToDoNoteFragment) getSupportFragmentManager().findFragmentByTag("TAG_TODO_FRAGMENT");
+                        flag = fragment.onSharing();
+                    }
+                    if (flag) {
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, StaticFields.shareNoteTitle + "\n\n" +
+                                StaticFields.shareNoteContent + "\n\n================\nShared from Pocket Notes, a truly simple notepad app.\n\nDownload now:)\n"
+                                + StaticFields.Store_URL);
+                        sendIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sendIntent, "Share note with..."));
+                    }
                 }else{
-                    portableContent.showSnackBar(Type.ERROR, "Some error occurred",
-                            Duration.SHORT);
+                    CanvasFragment fragmentCanvas = (CanvasFragment) getSupportFragmentManager().findFragmentByTag("TAG_CANVAS_FRAGMENT");
+                    if (fragmentCanvas.onSharing()){
+
+                        File file = OnStorage.createImageFile(StaticFields.shareNoteTitle,StaticFields.shareCanvasBitmap,this);
+                        Uri fileUri = FileProvider.getUriForFile(this, this.getPackageName(), file);
+                        Intent sendIntent = ShareCompat.IntentBuilder.from(this)
+                            .setType(this.getContentResolver().getType(fileUri))
+                            .setStream(fileUri)
+                            .getIntent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.setData(fileUri);
+                    //setting proper mime type
+                    MimeTypeMap map = MimeTypeMap.getSingleton();
+                    String ext = MimeTypeMap.getFileExtensionFromUrl(file.getName());
+                    String type = map.getMimeTypeFromExtension(ext);
+                    if (type == null) {
+                        type = "*/*";
+                    }
+                    sendIntent.setType(type);
+                    sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                    startActivity(Intent.createChooser(sendIntent, "Share file with..."));
+                    }
                 }
                 break;
         }
@@ -150,6 +188,18 @@ public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextL
         if (editorType.equals("simple")){
             final SimpleNoteFragment fragment = (SimpleNoteFragment) getSupportFragmentManager().findFragmentByTag("TAG_SIMPLE_FRAGMENT");
             if (fragment.backPressedSimple()) {
+                super.onBackPressed();
+                supportFinishAfterTransition();
+            }
+        }else if (editorType.equals("todoList")) {
+            ToDoNoteFragment fragment = (ToDoNoteFragment) getSupportFragmentManager().findFragmentByTag("TAG_TODO_FRAGMENT");
+            if (fragment.backPressed()) {
+                super.onBackPressed();
+                supportFinishAfterTransition();
+            }
+        }else if (editorType.equals("drawing")) {
+            CanvasFragment fragmentCanvas = (CanvasFragment) getSupportFragmentManager().findFragmentByTag("TAG_CANVAS_FRAGMENT");
+            if (fragmentCanvas.backPressedCanvas()) {
                 super.onBackPressed();
                 supportFinishAfterTransition();
             }
@@ -175,7 +225,7 @@ public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextL
                     Log.d(TAG, "onPause: updating note");
                     ContentValues contentValues = StaticFields.dbHelper.createDBContentValue(table, UniqueId,
                             StaticFields.noteTitle, StaticFields.noteContent, createdDateAndTime, currentDateAndTime, editorType
-                    ,star, tag);
+                            ,star, tag);
                     StaticFields.dbHelper.updateNote(table,UniqueId, contentValues);
                     if(Boolean.parseBoolean(star)){
                         //update in star table also
@@ -186,7 +236,6 @@ public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextL
                     }
                 }
                 c = StaticFields.dbHelper.getData(table);
-                Log.d(TAG, "onPause: note updated successfully");
 
             } else {          //indicates note doesn't exist or first element
                 Log.d(TAG, "onPause: new note. NumberRows: "+StaticFields.dbHelper.numberOfRows(table));
@@ -196,7 +245,6 @@ public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextL
                         AlreadyThere = true;
                         break;
                     }
-                    Log.d(TAG, "onPause: checking note exists in the database or not");
                 }
                 if (!AlreadyThere && !StaticFields.noteTitle.isEmpty()) {   //if new then insert
                     Log.d(TAG, "onPause: new note saving into database");
@@ -210,7 +258,7 @@ public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextL
             Log.d(TAG, "onPause: content:"+StaticFields.noteContent);
             c.close();
         }catch(Exception e){
-            portableContent.showSnackBar(Type.ERROR, "Some error occured. ("+e.getMessage()+")",
+            portableContent.showSnackBar(Type.ERROR, "Some error occurred.",
                     Duration.SHORT);
             Log.d(TAG, "onPause: error occurred. Message: "+e.getMessage());
         }
@@ -220,17 +268,42 @@ public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextL
     public void launchFragment(){
         Log.d(TAG, "launchFragment: launching editor fragment");
         Bundle bundle = new Bundle();
-        if (editorType.equals("simple")){
-            //launch simpleNoteFragment
-            fragment = new SimpleNoteFragment();
-            bundle.putString(StaticFields.KEY_EDITOR_TITLE, sendNoteTitle);
-            bundle.putString(StaticFields.KEY_EDITOR_CONTENT, sendNoteContent);
-            bundle.putString(StaticFields.KEY_EDITOR_DATECREATED, sendCreatedDateTime);
-            bundle.putString(StaticFields.KEY_EDITOR_INTENTFLAG, intentFlag);
-            fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().add(R.id.editor_frag_container, fragment, "TAG_SIMPLE_FRAGMENT")
-                    .addToBackStack(null)
-                    .commit();
+        switch(editorType){
+            case "simple":
+                //launch simpleNoteFragment
+                fragment = new SimpleNoteFragment();
+                bundle.putString(StaticFields.KEY_EDITOR_TITLE, sendNoteTitle);
+                bundle.putString(StaticFields.KEY_EDITOR_CONTENT, sendNoteContent);
+                bundle.putString(StaticFields.KEY_EDITOR_DATECREATED, sendCreatedDateTime);
+                bundle.putString(StaticFields.KEY_EDITOR_INTENTFLAG, intentFlag);
+                fragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().add(R.id.editor_frag_container, fragment, "TAG_SIMPLE_FRAGMENT")
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case "drawing":
+                CanvasFragment canvasFragment = new CanvasFragment();
+                bundle.putString(StaticFields.KEY_EDITOR_TITLE, sendNoteTitle);
+                bundle.putString(StaticFields.KEY_EDITOR_CONTENT, sendNoteContent);
+                bundle.putString(StaticFields.KEY_EDITOR_DATECREATED, sendCreatedDateTime);
+                bundle.putString(StaticFields.KEY_EDITOR_INTENTFLAG, intentFlag);
+                canvasFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().add(R.id.editor_frag_container, canvasFragment, "TAG_CANVAS_FRAGMENT")
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case "todoList":
+                ToDoNoteFragment fragmentToDo = new ToDoNoteFragment();
+                bundle.putString(StaticFields.KEY_EDITOR_TITLE, sendNoteTitle);
+                bundle.putString(StaticFields.KEY_EDITOR_CONTENT, sendNoteContent);
+                bundle.putString(StaticFields.KEY_EDITOR_DATECREATED, sendCreatedDateTime);
+                bundle.putString(StaticFields.KEY_EDITOR_INTENTFLAG, intentFlag);
+                fragmentToDo.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().add(R.id.editor_frag_container, fragmentToDo, "TAG_TODO_FRAGMENT")
+                        .addToBackStack(null)
+                        .commit();
+                break;
+
         }
     }
 
@@ -239,3 +312,4 @@ public class NoteEditorActivity extends AppCompatActivity implements RunDo.TextL
         return fragment.getEditText();
     }
 }
+

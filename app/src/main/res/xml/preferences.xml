@@ -44,7 +44,7 @@ keeping simplicity in mind."/>
             android:key="key_app_version"
             android:title="App version"
             android:background="?attr/cardBackColor"
-            android:summary="1.0.0"/>
+            android:summary="2.1.1"/>
         <Preference
             android:key="key_copyright"
             android:title="Copyright @ 2020"

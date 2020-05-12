@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Pocket Notes</string>
-    <string-array name="rich_spinner_file_type">
-        <item>.doc</item>
-        <item>.docx</item>
-        <item>.rtf</item>
+    <string-array name="spinner_canvas_stroke_style">
+        <item>Stroke</item>
+        <item>Fill</item>
+        <item>Fill and stroke</item>
     </string-array>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -17,7 +17,7 @@
     <string name="emptyscreen_message">Oops!!!\nlooks like it\'s empty here.\nTry to add(+) a note first.</string>
     <string name="bottomSheet_button_go">Go</string>
     <string name="permissions">Permissions:\n1. WRITE EXTERNAL STORAGE</string>
-    <string name="allow_permission_bottomsheet">To use all the features of this app such as saving your notes in the phone storage(.txt) you need to give the following permissions to the app.</string>
+    <string name="allow_permission_bottomsheet">To use all the features of this app such as saving your notes in the phone storage, sharing note files etc you need to give the following permissions to the app.</string>
     <string name="navigation_drawer_open">navigation drawer open</string>
     <string name="navigation_drawer_close">navigation drawer close</string>
 </resources>

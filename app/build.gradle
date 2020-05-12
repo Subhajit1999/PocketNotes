@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.subhajitkar.commercial.projet_tulip"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -20,7 +20,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -35,5 +34,11 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'com.werdpressed.partisan:rundo:1.0.5'
     implementation 'com.valdesekamdem.library:md-toast:0.9.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.github.yalantis:todolist:v1.0.1'
+    implementation project(path: ':CanvasView-master')
+    implementation files('libs/manifest-merger-25.2.3.jar')
+    implementation 'com.github.skydoves:colorpickerview:2.1.6'
+    implementation 'com.jaredrummler:material-spinner:1.3.1'
+    implementation 'org.parceler:parceler-api:1.1.12'
+    annotationProcessor 'org.parceler:parceler:1.1.12'
 }
